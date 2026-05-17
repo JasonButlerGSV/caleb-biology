@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biology — Chapter 6: Mendelian Genetics</title>
+<style>
+  /* System font stacks — no external requests, works fully offline */
+  :root {
+    --font-serif: ui-serif, Georgia, 'Iowan Old Style', 'Apple Garamond', 'Baskerville', 'Times New Roman', serif;
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  }
+  :root {
+    --bg: #fafaf7;
+    --ink: #1a1a1a;
+    --ink-soft: #555;
+    --ink-faint: #999;
+    --line: #e5e5df;
+    --line-strong: #2a2a2a;
+    --accent: #8a4a2e;
+    --accent-soft: #f0e7df;
+    --correct: #4a6b3e;
+    --review: #a8623a;
+    --card-bg: #ffffff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.5;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  /* ---------- Header ---------- */
+  .header {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 24px;
+    margin-bottom: 32px;
+  }
+  .eyebrow {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 8px;
+  }
+  .title {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: 38px;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+  .title em {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .subtitle {
+    color: var(--ink-soft);
+    margin-top: 8px;
+    font-size: 15px;
+  }
+
+  /* ---------- Controls ---------- */
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 24px;
+    align-items: center;
+  }
+  .filter-label {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-right: 8px;
+  }
+  .chip {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--ink-soft);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .chip:hover {
+    border-color: var(--line-strong);
+    color: var(--ink);
+  }
+  .chip.active {
+    background: var(--line-strong);
+    color: var(--bg);
+    border-color: var(--line-strong);
+  }
+
+  /* ---------- Progress ---------- */
+  .progress-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 16px;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+  .progress-stats {
+    display: flex;
+    gap: 18px;
+  }
+  .stat-known { color: var(--correct); }
+  .stat-review { color: var(--review); }
+  .progress-track {
+    height: 2px;
+    background: var(--line);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 32px;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--line-strong);
+    transition: width 0.3s ease;
+  }
+
+  /* ---------- Flashcard ---------- */
+  .card-wrapper {
+    perspective: 2000px;
+    margin-bottom: 24px;
+  }
+  .card {
+    position: relative;
+    min-height: 360px;
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
+    cursor: pointer;
+  }
+  .card.flipped {
+    transform: rotateY(180deg);
+  }
+  .card-face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    background: var(--card-bg);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 40px 36px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02), 0 8px 24px rgba(0,0,0,0.04);
+  }
+  .card-back {
+    transform: rotateY(180deg);
+    background: #fdfdfa;
+  }
+  .card-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 24px;
+  }
+  .card-meta .type-badge {
+    color: var(--accent);
+  }
+  .card-question {
+    font-family: var(--font-serif);
+    font-size: 22px;
+    line-height: 1.4;
+    font-weight: 400;
+    color: var(--ink);
+    flex: 1;
+  }
+  .card-options {
+    margin-top: 16px;
+    font-family: var(--font-sans);
+    font-size: 15px;
+    color: var(--ink-soft);
+    line-height: 1.9;
+  }
+  .card-options .opt {
+    display: block;
+  }
+  .card-options .letter {
+    display: inline-block;
+    width: 22px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .card-hint {
+    font-size: 12px;
+    color: var(--ink-faint);
+    margin-top: 24px;
+    font-style: italic;
+  }
+  .answer-label {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 12px;
+  }
+  .answer-text {
+    font-family: var(--font-serif);
+    font-size: 24px;
+    line-height: 1.35;
+    font-weight: 400;
+    color: var(--ink);
+    margin-bottom: 16px;
+  }
+  .answer-text strong {
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .answer-explanation {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    flex: 1;
+  }
+
+  /* Punnett square embedded in cards */
+  .punnett {
+    display: inline-grid;
+    grid-template-columns: 28px repeat(2, 56px);
+    grid-template-rows: 28px repeat(2, 56px);
+    gap: 0;
+    margin: 16px 0;
+    font-family: var(--font-serif);
+    font-size: 16px;
+  }
+  .punnett > div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--line-strong);
+    background: white;
+  }
+  .punnett .label {
+    border: none;
+    font-weight: 500;
+    color: var(--ink-soft);
+  }
+  .punnett .corner {
+    border: none;
+  }
+
+  /* ---------- Action buttons ---------- */
+  .actions {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .action-btn {
+    flex: 1;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    padding: 14px 18px;
+    border: 1px solid var(--line);
+    background: white;
+    color: var(--ink);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .action-btn:hover {
+    border-color: var(--line-strong);
+  }
+  .action-btn.know {
+    border-color: var(--correct);
+    color: var(--correct);
+  }
+  .action-btn.know:hover {
+    background: var(--correct);
+    color: white;
+  }
+  .action-btn.review {
+    border-color: var(--review);
+    color: var(--review);
+  }
+  .action-btn.review:hover {
+    background: var(--review);
+    color: white;
+  }
+
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+  .nav-btn {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 10px 18px;
+    border: none;
+    background: transparent;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: color 0.15s ease;
+  }
+  .nav-btn:hover {
+    color: var(--ink);
+  }
+  .nav-btn:disabled {
+    color: var(--ink-faint);
+    cursor: not-allowed;
+    opacity: 0.4;
+  }
+  .nav-center {
+    display: flex;
+    gap: 12px;
+  }
+  .icon-btn {
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--line);
+    background: white;
+    border-radius: 999px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-soft);
+    transition: all 0.15s ease;
+  }
+  .icon-btn:hover {
+    border-color: var(--line-strong);
+    color: var(--ink);
+  }
+
+  /* ---------- Completion screen ---------- */
+  .completion {
+    text-align: center;
+    padding: 80px 20px;
+    display: none;
+  }
+  .completion.active { display: block; }
+  .completion h2 {
+    font-family: var(--font-serif);
+    font-size: 32px;
+    font-weight: 400;
+    margin-bottom: 12px;
+  }
+  .completion p {
+    color: var(--ink-soft);
+    margin-bottom: 24px;
+  }
+  .completion-stats {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin: 32px 0;
+  }
+  .completion-stat {
+    text-align: center;
+  }
+  .completion-stat .num {
+    font-family: var(--font-serif);
+    font-size: 40px;
+    font-weight: 400;
+    display: block;
+  }
+  .completion-stat .lbl {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 640px) {
+    .container { padding: 24px 16px 60px; }
+    .title { font-size: 28px; }
+    .card-face { padding: 28px 22px; }
+    .card-question { font-size: 18px; }
+    .answer-text { font-size: 20px; }
+    .actions { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <header class="header">
+    <div class="eyebrow">Honors Biology I · Study Guide</div>
+    <h1 class="title">Chapter 6 — <em>Mendelian Genetics</em></h1>
+    <p class="subtitle">Tap a card to flip. Mark what you know and what needs review.</p>
+  </header>
+
+  <!-- Filter -->
+  <div class="controls">
+    <span class="filter-label">Filter</span>
+    <button class="chip active" data-filter="all">All</button>
+    <button class="chip" data-filter="tf">True / False</button>
+    <button class="chip" data-filter="mc">Multiple Choice</button>
+    <button class="chip" data-filter="fb">Fill-in</button>
+    <button class="chip" data-filter="essay">Essay</button>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-bar">
+    <div><span id="current">1</span> / <span id="total">0</span></div>
+    <div class="progress-stats">
+      <span class="stat-known">Known · <span id="known-count">0</span></span>
+      <span class="stat-review">Review · <span id="review-count">0</span></span>
+    </div>
+  </div>
+  <div class="progress-track">
+    <div class="progress-fill" id="progress-fill"></div>
+  </div>
+
+  <!-- Card -->
+  <div id="card-area">
+    <div class="card-wrapper">
+      <div class="card" id="card" onclick="flipCard()">
+        <div class="card-face card-front">
+          <div class="card-meta">
+            <span class="type-badge" id="card-type">Type</span>
+            <span id="card-num">Q1</span>
+          </div>
+          <div class="card-question" id="card-question"></div>
+          <div class="card-options" id="card-options"></div>
+          <div class="card-hint">Tap to reveal answer</div>
+        </div>
+        <div class="card-face card-back">
+          <div class="card-meta">
+            <span class="type-badge">Answer</span>
+            <span id="card-num-back">Q1</span>
+          </div>
+          <div class="answer-label">Correct Answer</div>
+          <div class="answer-text" id="card-answer"></div>
+          <div class="answer-explanation" id="card-explanation"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="action-btn review" onclick="markCard('review')">Review again</button>
+      <button class="action-btn know" onclick="markCard('known')">I know this</button>
+    </div>
+
+    <div class="nav">
+      <button class="nav-btn" id="prev-btn" onclick="prevCard()">← Previous</button>
+      <div class="nav-center">
+        <button class="icon-btn" onclick="shuffleCards()" title="Shuffle">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
+        </button>
+        <button class="icon-btn" onclick="resetProgress()" title="Reset">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        </button>
+      </div>
+      <button class="nav-btn" id="next-btn" onclick="nextCard()">Next →</button>
+    </div>
+  </div>
+
+  <!-- Completion screen -->
+  <div class="completion" id="completion">
+    <h2>Nicely done.</h2>
+    <p>You've made it through the deck.</p>
+    <div class="completion-stats">
+      <div class="completion-stat">
+        <span class="num" id="final-known">0</span>
+        <span class="lbl">Known</span>
+      </div>
+      <div class="completion-stat">
+        <span class="num" id="final-review">0</span>
+        <span class="lbl">To Review</span>
+      </div>
+    </div>
+    <button class="action-btn" onclick="restartDeck()" style="max-width: 200px; margin: 0 auto;">Start over</button>
+    <br><br>
+    <button class="action-btn review" onclick="reviewOnly()" style="max-width: 240px; margin: 0 auto;" id="review-only-btn">Review only flagged cards</button>
+  </div>
+
+</div>
+
+<script>
+// ============ FLASHCARD DATA ============
+const allCards = [
+  // ---- True/False ----
+  { type: 'tf', typeLabel: 'True / False', num: 1,
+    q: 'The mating of garden-pea flowers can be easily controlled because the male and female reproductive parts are enclosed within the same flower.',
+    a: 'True',
+    exp: 'Pea flowers normally self-pollinate because both reproductive structures are inside one closed flower. This let Mendel control crosses precisely by manually pollinating them.' },
+  { type: 'tf', typeLabel: 'True / False', num: 2,
+    q: 'When Mendel cross-pollinated two varieties from the P generation that exhibited contrasting traits, he called the offspring the F₂ generation.',
+    a: 'False',
+    exp: 'The first offspring of the P (parental) generation is called the F₁ generation. The F₂ generation comes from crossing F₁ individuals with each other.' },
+  { type: 'tf', typeLabel: 'True / False', num: 3,
+    q: 'Individuals must exhibit a trait in order for it to appear in their offspring.',
+    a: 'False',
+    exp: 'A parent can carry a recessive allele without showing the trait (heterozygous carriers). Two heterozygous parents can produce a homozygous recessive child that does show it.' },
+  { type: 'tf', typeLabel: 'True / False', num: 4,
+    q: 'It is not possible for a gene to have more than two alleles.',
+    a: 'False',
+    exp: 'A single individual carries only two alleles per gene (one from each parent), but a gene can have many alleles in the population. ABO blood type is the classic example — three alleles: Iᴬ, Iᴮ, i.' },
+  { type: 'tf', typeLabel: 'True / False', num: 5,
+    q: 'If all of the offspring of a test cross have the dominant trait, then the genotype of the individual being tested is heterozygous.',
+    a: 'False',
+    exp: 'If all offspring show the dominant trait, the tested parent is most likely homozygous dominant. A heterozygous parent would produce roughly half offspring with the recessive trait.' },
+
+  // ---- Multiple Choice ----
+  { type: 'mc', typeLabel: 'Multiple Choice', num: 1,
+    q: 'The passing of traits from parents to offspring is called',
+    options: [['A','genetics'],['B','heredity'],['C','development'],['D','maturation']],
+    a: 'B — Heredity',
+    exp: 'Heredity is the passing of traits from one generation to the next. Genetics is the broader scientific study of heredity.' },
+  { type: 'mc', typeLabel: 'Multiple Choice', num: 2,
+    q: 'The scientific study of heredity is called',
+    options: [['A','meiosis'],['B','crossing-over'],['C','genetics'],['D','pollination']],
+    a: 'C — Genetics',
+    exp: 'Genetics is the field of science that studies how heredity works — how genes are passed and expressed.' },
+  { type: 'mc', typeLabel: 'Multiple Choice', num: 3,
+    q: "Step 1 of Mendel's garden pea experiment, allowing each variety of garden pea to self-pollinate for several generations, produced the",
+    options: [['A','F₁ generation'],['B','F₂ generation'],['C','P generation'],['D','P₁ generation']],
+    a: 'C — P generation',
+    exp: 'Self-pollinating for many generations created true-breeding parental lines. Those true-breeding parents are the P (parental) generation, the starting point of the crosses.' },
+  { type: 'mc', typeLabel: 'Multiple Choice', num: 4,
+    q: 'F₂ : F₁ ::',
+    options: [['A','P : F₁'],['B','F₁ : F₂'],['C','F₁ : P'],['D','dominant trait : recessive trait']],
+    a: 'C — F₁ : P',
+    exp: 'This is an analogy: F₂ comes from F₁, just as F₁ comes from P. Each generation produces the next in sequence.' },
+  { type: 'mc', typeLabel: 'Multiple Choice', num: 5,
+    q: 'An individual heterozygous for a trait and an individual homozygous recessive for the trait are crossed and produce many offspring that are',
+    options: [['A','all the same genotype'],['B','of two different phenotypes'],['C','of three different phenotypes'],['D','all the same phenotype']],
+    a: 'B — Two different phenotypes',
+    exp: 'A test cross of Tt × tt produces half Tt (dominant phenotype) and half tt (recessive phenotype) — two different phenotypes in a 1:1 ratio.' },
+  { type: 'mc', typeLabel: 'Multiple Choice', num: 6,
+    q: 'Tallness is dominant to shortness in pea plants. Which of the following represents a genotype of a pea plant that is heterozygous for tallness?',
+    options: [['A','Ts'],['B','TT'],['C','Tt'],['D','tt']],
+    a: 'C — Tt',
+    exp: 'Heterozygous means having two different alleles for a trait. Tt has one dominant (T) and one recessive (t) allele. TT is homozygous dominant; tt is homozygous recessive.' },
+  { type: 'mc', typeLabel: 'Multiple Choice', num: 7,
+    q: "Mendel's finding that the inheritance of one trait had no effect on the inheritance of another became known as the",
+    options: [['A','law of dominance'],['B','law of universal inheritance'],['C','law of segregation'],['D','law of independent assortment']],
+    a: 'D — Law of independent assortment',
+    exp: "Mendel's law of independent assortment states that alleles for different traits are distributed to gametes independently of one another. This holds when the genes are on different chromosomes." },
+  { type: 'mc', typeLabel: 'Multiple Choice', num: 13,
+    q: 'In rabbits, black fur (B) is dominant to brown fur (b). A Bb × Bb cross is shown in the Punnett square below. The device shown, used to determine the probable outcome of genetic crosses, is called a',
+    punnett: { p1: 'B', p2: 'b', q1: 'b', q2: 'b', cells: ['BB','Bb','Bb','bb'] },
+    options: [['A','Mendelian box'],['B','Punnett square'],['C','genetic graph'],['D','pedigree']],
+    a: 'B — Punnett square',
+    exp: 'A Punnett square is the diagram named after Reginald Punnett that predicts genotype and phenotype ratios from a genetic cross.' },
+  { type: 'mc', typeLabel: 'Multiple Choice', num: 14,
+    q: 'Referring to the Bb × Bb rabbit cross (black fur B dominant to brown b), both of the parents in the cross are',
+    punnett: { p1: 'B', p2: 'b', q1: 'b', q2: 'b', cells: ['BB','Bb','Bb','bb'] },
+    options: [['A','black'],['B','brown'],['C','homozygous dominant'],['D','homozygous recessive']],
+    a: 'A — Black',
+    exp: 'Both parents are Bb (heterozygous). Because B (black) is dominant over b (brown), having even one B allele means the rabbit shows the black phenotype.' },
+  { type: 'mc', typeLabel: 'Multiple Choice', num: 15,
+    q: 'In the Bb × Bb rabbit Punnett square, the phenotype of the offspring indicated by box 3 (genotype Bb) would be',
+    punnett: { p1: 'B', p2: 'b', q1: 'b', q2: 'b', cells: ['BB','Bb','Bb','bb'] },
+    options: [['A','brown'],['B','black'],['C','a mixture of brown and black'],['D','None of the above']],
+    a: 'B — Black',
+    exp: 'Box 3 has the genotype Bb. Since B (black) is dominant over b (brown), one B allele is enough to make the rabbit black.' },
+  { type: 'mc', typeLabel: 'Multiple Choice', num: 16,
+    q: 'In the Bb × Bb rabbit Punnett square, the genotypic ratio of the possible offspring would be',
+    punnett: { p1: 'B', p2: 'b', q1: 'b', q2: 'b', cells: ['BB','Bb','Bb','bb'] },
+    options: [['A','1:1'],['B','3:1'],['C','1:3'],['D','1:2:1']],
+    a: 'D — 1:2:1',
+    exp: 'The four boxes give 1 BB : 2 Bb : 1 bb — a 1:2:1 genotypic ratio. The phenotypic ratio is 3:1 (black to brown), but the genotypic ratio counts each genotype separately.' },
+  { type: 'mc', typeLabel: 'Multiple Choice', num: 17,
+    q: 'What is the expected genotypic ratio resulting from a homozygous dominant × heterozygous monohybrid cross? (e.g., TT × Tt)',
+    options: [['A','4:0'],['B','2:2'],['C','1:2:1'],['D','1:3:1']],
+    a: 'B — 2:2 (or 1:1)',
+    exp: 'TT × Tt produces 2 TT and 2 Tt offspring — a 2:2 ratio (which simplifies to 1:1). Only two genotypes are possible since no tt can be produced.' },
+  { type: 'mc', typeLabel: 'Multiple Choice', num: 18,
+    q: 'What is the expected genotypic ratio resulting from a heterozygous × heterozygous monohybrid cross? (e.g., Tt × Tt)',
+    options: [['A','1:2:1'],['B','1:3:1'],['C','1:2'],['D','1:0']],
+    a: 'A — 1:2:1',
+    exp: 'Tt × Tt produces 1 TT : 2 Tt : 1 tt — the classic 1:2:1 genotypic ratio. The phenotypic ratio is 3:1.' },
+  { type: 'mc', typeLabel: 'Multiple Choice', num: 19,
+    q: 'What is the expected phenotypic ratio resulting from a homozygous dominant × heterozygous monohybrid cross? (e.g., TT × Tt)',
+    options: [['A','1:3:1'],['B','1:2:1'],['C','2:2'],['D','4:0']],
+    a: 'D — 4:0',
+    exp: 'All offspring of TT × Tt inherit at least one T allele, so 100% show the dominant phenotype. The ratio is 4:0 (all dominant, none recessive).' },
+  { type: 'mc', typeLabel: 'Multiple Choice', num: 20,
+    q: 'What is the probability that the offspring of a homozygous dominant individual and a homozygous recessive individual will exhibit the dominant phenotype?',
+    options: [['A','25%'],['B','50%'],['C','66%'],['D','100%']],
+    a: 'D — 100%',
+    exp: 'TT × tt produces all Tt offspring. Every offspring has one dominant allele, so 100% show the dominant phenotype.' },
+  { type: 'mc', typeLabel: 'Multiple Choice', num: 21,
+    q: 'Which of the following traits is controlled by multiple alleles in humans?',
+    options: [['A','hair color'],['B','blood type'],['C',"widow's peak"],['D','tongue-rolling']],
+    a: 'B — Blood type',
+    exp: 'The ABO blood type gene has three alleles in the human population: Iᴬ, Iᴮ, and i. Most genes have only two common alleles.' },
+  { type: 'mc', typeLabel: 'Multiple Choice', num: 22,
+    q: 'What would be the blood type of a person who inherited a B allele from one parent and a recessive (i) allele from the other?',
+    options: [['A','type A'],['B','type B'],['C','type AB'],['D','type BO']],
+    a: 'B — Type B',
+    exp: 'The genotype Iᴮi produces type B blood. The Iᴮ allele is dominant over i, so the recessive allele is masked. There is no "BO" blood type.' },
+  { type: 'mc', typeLabel: 'Multiple Choice', num: 23,
+    q: 'The ABO blood type gene has three alleles. How many possible phenotypes are there?',
+    options: [['A','three'],['B','four'],['C','six'],['D','none of the above']],
+    a: 'B — Four',
+    exp: 'There are four blood type phenotypes: A, B, AB, and O. AB exists because Iᴬ and Iᴮ are codominant — both are expressed when present together.' },
+
+  // ---- Fill-in / Completion ----
+  { type: 'fb', typeLabel: 'Fill-in', num: 1,
+    q: 'A reproductive process in which fertilization occurs within a single plant is ___.',
+    a: 'Self-pollination',
+    exp: 'Self-pollination happens when pollen from a flower fertilizes the egg of the same flower or another flower on the same plant. Pea plants normally self-pollinate.' },
+  { type: 'fb', typeLabel: 'Fill-in', num: 2,
+    q: 'A(n) ___ cross is a cross that involves one pair of contrasting traits.',
+    a: 'Monohybrid',
+    exp: 'A monohybrid cross studies one trait (e.g., flower color only). A dihybrid cross studies two traits at once.' },
+  { type: 'fb', typeLabel: 'Fill-in', num: 3,
+    q: "In Mendel's experiments, a trait that disappeared in the F₁ generation but reappeared in the F₂ generation was always a(n) ___ trait.",
+    a: 'Recessive',
+    exp: 'Recessive traits are masked when paired with a dominant allele. They reappear in F₂ when two heterozygous F₁ individuals each pass on the recessive allele.' },
+  { type: 'fb', typeLabel: 'Fill-in', num: 4,
+    q: 'Different forms of a particular gene are called ___.',
+    a: 'Alleles',
+    exp: 'Alleles are variants of the same gene. For example, the gene for pea color has a yellow allele and a green allele.' },
+  { type: 'fb', typeLabel: 'Fill-in', num: 5,
+    q: 'An organism that has two identical alleles for a trait is called ___.',
+    a: 'Homozygous',
+    exp: 'Homozygous means "same alleles" — either TT (homozygous dominant) or tt (homozygous recessive). Heterozygous means having two different alleles (Tt).' },
+  { type: 'fb', typeLabel: 'Fill-in', num: 6,
+    q: 'If some of the offspring of a test cross have the recessive trait, then the genotype of the individual being tested is ___.',
+    a: 'Heterozygous',
+    exp: 'In a test cross, the unknown is crossed with a homozygous recessive (tt). If any offspring show the recessive trait, the unknown must have contributed a recessive allele — meaning it is heterozygous (Tt).',
+    note: 'Note: the original answer key said "homozygous recessive," but a homozygous recessive parent would produce ALL recessive offspring. "Some recessive" offspring means the tested parent must be heterozygous.' },
+  { type: 'fb', typeLabel: 'Fill-in', num: 7,
+    q: 'The position of a gene on a chromosome is called its ___.',
+    a: 'Locus',
+    exp: "Each gene has a specific locus (location) on a particular chromosome. The plural is loci. Think of it as the gene's address." },
+
+  // ---- Essay ----
+  { type: 'essay', typeLabel: 'Essay', num: 1,
+    q: 'Describe how genotype and phenotype are related, defining both terms in your answer.',
+    a: 'Genotype determines phenotype.',
+    exp: 'Genotype is the genetic makeup of an organism — the specific combination of alleles it carries for a trait (e.g., TT, Tt, or tt). Phenotype is the observable physical expression of those alleles — what the trait actually looks like (e.g., tall or short).\n\nThe two are related because genotype determines phenotype: the alleles an organism inherits decide which traits are expressed. Dominant alleles mask recessive ones, so TT and Tt produce the same phenotype (tall), while only tt shows the recessive phenotype (short). Environmental factors can also influence phenotype, but the genotype sets the underlying instructions.' },
+  { type: 'essay', typeLabel: 'Essay', num: 2,
+    q: 'Explain codominance and give an example.',
+    a: 'Both alleles are fully expressed.',
+    exp: 'Codominance is a pattern of inheritance in which both alleles in a heterozygous individual are fully and separately expressed in the phenotype — neither one masks the other.\n\nThe classic example is human ABO blood type. A person with the genotype Iᴬ Iᴮ has type AB blood, expressing both the A antigen and the B antigen on their red blood cells. Another example is roan cattle, where a heterozygous animal has both red hairs and white hairs visible at the same time (not blended pink).\n\nNote: codominance is different from incomplete dominance, where the alleles blend (red + white = pink).' },
+  { type: 'essay', typeLabel: 'Essay', num: 3,
+    q: 'All of the offspring resulting from a cross between a red snapdragon and a white snapdragon are pink. What is the possible explanation for this?',
+    a: 'Incomplete dominance.',
+    exp: 'This is incomplete dominance — a pattern of inheritance where neither allele is fully dominant, so the heterozygous phenotype is a blend or intermediate of the two homozygous phenotypes.\n\nThe red parent (RR) and the white parent (WW or R\'R\') each pass one allele to the offspring, giving every F₁ offspring the heterozygous genotype (RW). Because neither red nor white is fully dominant, the resulting phenotype is pink — a blend.\n\nThis differs from codominance: in codominance both colors would appear separately (red and white patches), but in incomplete dominance they blend into a single intermediate color.' },
+  { type: 'essay', typeLabel: 'Essay', num: 4,
+    q: 'A woman with blood type A had a baby with blood type O. She is trying to claim that Post Malone (blood type B) was the father of her child. Could Malone be the father? Why or why not? (4 points)',
+    a: 'Yes — it is possible.',
+    exp: 'Yes, Post Malone could be the father.\n\nBlood type O has the genotype ii (homozygous recessive). For the baby to be type O, BOTH parents must have contributed an i allele.\n\n• The mother is type A. Her genotype could be Iᴬ Iᴬ or Iᴬ i. Since the baby is type O, she must be Iᴬ i — she carries a recessive i allele and passed it to the baby.\n\n• Post Malone is type B. His genotype could be Iᴮ Iᴮ or Iᴮ i. If he is Iᴮ i, he also carries a recessive i allele and could have passed it to the baby.\n\nSo if Post Malone has the genotype Iᴮ i, he and the mother could absolutely produce a type O baby. The blood typing does not rule him out as the father.' },
+  { type: 'essay', typeLabel: 'Essay', num: 5,
+    q: 'What are four specific, numeric ways to express the probability of an event that occurs 250 times out of 1,000 total trials?',
+    a: '1/4, 0.25, 25%, 1:3',
+    exp: 'Probability can be expressed in four equivalent ways:\n\n• Fraction: 250/1000 simplifies to 1/4\n• Decimal: 0.25\n• Percentage: 25%\n• Ratio: 1:3 (1 occurrence for every 3 non-occurrences — note that 250 out of 1000 means 250 successes and 750 failures)\n\nAll four describe the same probability — just in different formats.' },
+];
+
+// ============ STATE ============
+let cards = [...allCards];
+let currentIndex = 0;
+let known = new Set();
+let toReview = new Set();
+let currentFilter = 'all';
+
+// ============ RENDER ============
+function renderCard() {
+  if (currentIndex >= cards.length) {
+    showCompletion();
+    return;
+  }
+  document.getElementById('completion').classList.remove('active');
+  document.getElementById('card-area').style.display = 'block';
+
+  const c = cards[currentIndex];
+  document.getElementById('card').classList.remove('flipped');
+
+  document.getElementById('card-type').textContent = c.typeLabel;
+  document.getElementById('card-num').textContent = `Q${c.num}`;
+  document.getElementById('card-num-back').textContent = `Q${c.num}`;
+  document.getElementById('card-question').textContent = c.q;
+
+  // Options + optional Punnett square
+  const optsDiv = document.getElementById('card-options');
+  let html = '';
+  if (c.punnett) {
+    html += renderPunnett(c.punnett);
+  }
+  if (c.options) {
+    c.options.forEach(([letter, text]) => {
+      html += `<span class="opt"><span class="letter">${letter}.</span> ${text}</span>`;
+    });
+  }
+  optsDiv.innerHTML = html;
+
+  document.getElementById('card-answer').innerHTML = `<strong>${c.a}</strong>`;
+  let exp = c.exp.replace(/\n/g, '<br><br>');
+  if (c.note) exp += `<br><br><em style="color:var(--ink-faint); font-size:13px;">${c.note}</em>`;
+  document.getElementById('card-explanation').innerHTML = exp;
+
+  document.getElementById('current').textContent = currentIndex + 1;
+  document.getElementById('total').textContent = cards.length;
+  document.getElementById('progress-fill').style.width = `${((currentIndex + 1) / cards.length) * 100}%`;
+
+  document.getElementById('prev-btn').disabled = currentIndex === 0;
+
+  updateCounts();
+}
+
+function renderPunnett(p) {
+  return `
+    <div class="punnett">
+      <div class="corner"></div>
+      <div class="label">${p.p1}</div>
+      <div class="label">${p.p2}</div>
+      <div class="label">${p.q1}</div>
+      <div>${p.cells[0]}</div>
+      <div>${p.cells[1]}</div>
+      <div class="label">${p.q2}</div>
+      <div>${p.cells[2]}</div>
+      <div>${p.cells[3]}</div>
+    </div>
+  `;
+}
+
+function updateCounts() {
+  document.getElementById('known-count').textContent = known.size;
+  document.getElementById('review-count').textContent = toReview.size;
+}
+
+// ============ ACTIONS ============
+function flipCard() {
+  document.getElementById('card').classList.toggle('flipped');
+}
+
+function nextCard() {
+  if (currentIndex < cards.length - 1) {
+    currentIndex++;
+    renderCard();
+  } else {
+    showCompletion();
+  }
+}
+
+function prevCard() {
+  if (currentIndex > 0) {
+    currentIndex--;
+    renderCard();
+  }
+}
+
+function markCard(status) {
+  const c = cards[currentIndex];
+  const key = `${c.type}-${c.num}`;
+  if (status === 'known') {
+    known.add(key);
+    toReview.delete(key);
+  } else {
+    toReview.add(key);
+    known.delete(key);
+  }
+  updateCounts();
+  setTimeout(() => nextCard(), 200);
+}
+
+function shuffleCards() {
+  for (let i = cards.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [cards[i], cards[j]] = [cards[j], cards[i]];
+  }
+  currentIndex = 0;
+  renderCard();
+}
+
+function resetProgress() {
+  if (!confirm('Reset all progress for this filter?')) return;
+  known.clear();
+  toReview.clear();
+  currentIndex = 0;
+  applyFilter(currentFilter);
+}
+
+function applyFilter(filter) {
+  currentFilter = filter;
+  if (filter === 'all') {
+    cards = [...allCards];
+  } else {
+    cards = allCards.filter(c => c.type === filter);
+  }
+  currentIndex = 0;
+  renderCard();
+}
+
+function showCompletion() {
+  document.getElementById('card-area').style.display = 'none';
+  document.getElementById('completion').classList.add('active');
+  document.getElementById('final-known').textContent = known.size;
+  document.getElementById('final-review').textContent = toReview.size;
+  document.getElementById('review-only-btn').style.display = toReview.size > 0 ? 'block' : 'none';
+}
+
+function restartDeck() {
+  currentIndex = 0;
+  renderCard();
+}
+
+function reviewOnly() {
+  cards = allCards.filter(c => toReview.has(`${c.type}-${c.num}`));
+  currentIndex = 0;
+  renderCard();
+}
+
+// ============ FILTER CHIPS ============
+document.querySelectorAll('.chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    applyFilter(chip.dataset.filter);
+  });
+});
+
+// ============ KEYBOARD ============
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight') nextCard();
+  if (e.key === 'ArrowLeft') prevCard();
+  if (e.key === ' ') { e.preventDefault(); flipCard(); }
+});
+
+// ============ INIT ============
+renderCard();
+</script>
+</body>
+</html>
