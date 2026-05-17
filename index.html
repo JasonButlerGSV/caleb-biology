@@ -3,9 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Biology — Chapter 6: Mendelian Genetics</title>
+<title>Caleb's Biology Study Guide</title>
 <style>
-  /* System font stacks — no external requests, works fully offline */
   :root {
     --font-serif: ui-serif, Georgia, 'Iowan Old Style', 'Apple Garamond', 'Baskerville', 'Times New Roman', serif;
     --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
@@ -42,14 +41,133 @@
     padding: 48px 24px 80px;
   }
 
-  /* ---------- Header ---------- */
+  /* ---------- Landing / Chapter Picker ---------- */
+  .landing {
+    display: none;
+  }
+  .landing.active { display: block; }
+
+  .landing-header {
+    text-align: center;
+    margin-bottom: 56px;
+    padding-top: 24px;
+  }
+  .landing-eyebrow {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 12px;
+  }
+  .landing-title {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: 48px;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+  .landing-title em {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .landing-subtitle {
+    color: var(--ink-soft);
+    font-size: 16px;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  .chapter-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .chapter-card {
+    background: var(--card-bg);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 28px 28px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+    width: 100%;
+    font-family: var(--font-sans);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+  .chapter-card:hover {
+    border-color: var(--line-strong);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+  }
+  .chapter-card-info {
+    flex: 1;
+  }
+  .chapter-label {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 6px;
+  }
+  .chapter-name {
+    font-family: var(--font-serif);
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .chapter-name em {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .chapter-count {
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+  .chapter-arrow {
+    color: var(--ink-faint);
+    transition: transform 0.2s ease, color 0.2s ease;
+    flex-shrink: 0;
+  }
+  .chapter-card:hover .chapter-arrow {
+    color: var(--accent);
+    transform: translateX(4px);
+  }
+
+  /* ---------- Deck View ---------- */
+  .deck-view {
+    display: none;
+  }
+  .deck-view.active { display: block; }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: none;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    padding: 8px 0;
+    margin-bottom: 16px;
+    transition: color 0.15s ease;
+  }
+  .back-link:hover { color: var(--ink); }
+
   .header {
     border-bottom: 1px solid var(--line);
     padding-bottom: 24px;
     margin-bottom: 32px;
   }
   .eyebrow {
-    font-family: var(--font-sans);
     font-size: 11px;
     font-weight: 500;
     letter-spacing: 0.18em;
@@ -239,7 +357,7 @@
     flex: 1;
   }
 
-  /* Punnett square embedded in cards */
+  /* Punnett square */
   .punnett {
     display: inline-grid;
     grid-template-columns: 28px repeat(2, 56px);
@@ -263,6 +381,62 @@
   }
   .punnett .corner {
     border: none;
+  }
+
+  /* Mitosis stage diagram */
+  .mitosis-diagram {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin: 16px 0;
+  }
+  .stage-box {
+    border: 1px solid var(--line-strong);
+    border-radius: 4px;
+    padding: 12px 8px;
+    text-align: center;
+    background: white;
+  }
+  .stage-letter {
+    font-family: var(--font-serif);
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 4px;
+  }
+  .stage-label {
+    font-size: 12px;
+    color: var(--ink-soft);
+    line-height: 1.3;
+  }
+
+  /* Meiosis 5-diagram grid */
+  .diagram-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin: 16px 0;
+  }
+  .diagram-box {
+    border: 1px solid var(--line-strong);
+    border-radius: 4px;
+    padding: 10px 6px;
+    text-align: center;
+    background: white;
+  }
+  .diagram-letter {
+    font-family: var(--font-serif);
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 4px;
+  }
+  .diagram-label {
+    font-size: 11px;
+    color: var(--ink-soft);
+    line-height: 1.3;
   }
 
   /* ---------- Action buttons ---------- */
@@ -394,294 +568,333 @@
   /* ---------- Responsive ---------- */
   @media (max-width: 640px) {
     .container { padding: 24px 16px 60px; }
+    .landing-title { font-size: 36px; }
     .title { font-size: 28px; }
     .card-face { padding: 28px 22px; }
     .card-question { font-size: 18px; }
     .answer-text { font-size: 20px; }
     .actions { flex-direction: column; }
+    .mitosis-diagram { grid-template-columns: repeat(2, 1fr); }
+    .diagram-grid { grid-template-columns: repeat(2, 1fr); }
+    .chapter-card { padding: 22px 20px; }
+    .chapter-name { font-size: 19px; }
   }
 </style>
 </head>
 <body>
 <div class="container">
 
-  <!-- Header -->
-  <header class="header">
-    <div class="eyebrow">Honors Biology I · Study Guide</div>
-    <h1 class="title">Chapter 6 — <em>Mendelian Genetics</em></h1>
-    <p class="subtitle">Tap a card to flip. Mark what you know and what needs review.</p>
-  </header>
+  <!-- ============ LANDING PAGE ============ -->
+  <div class="landing active" id="landing">
+    <div class="landing-header">
+      <div class="landing-eyebrow">Honors Biology I</div>
+      <h1 class="landing-title">Study <em>Guide</em></h1>
+      <p class="landing-subtitle">Flashcards for every chapter test. Tap a chapter to begin.</p>
+    </div>
 
-  <!-- Filter -->
-  <div class="controls">
-    <span class="filter-label">Filter</span>
-    <button class="chip active" data-filter="all">All</button>
-    <button class="chip" data-filter="tf">True / False</button>
-    <button class="chip" data-filter="mc">Multiple Choice</button>
-    <button class="chip" data-filter="fb">Fill-in</button>
-    <button class="chip" data-filter="essay">Essay</button>
-  </div>
-
-  <!-- Progress -->
-  <div class="progress-bar">
-    <div><span id="current">1</span> / <span id="total">0</span></div>
-    <div class="progress-stats">
-      <span class="stat-known">Known · <span id="known-count">0</span></span>
-      <span class="stat-review">Review · <span id="review-count">0</span></span>
+    <div class="chapter-grid" id="chapter-grid">
+      <!-- chapter cards injected here -->
     </div>
   </div>
-  <div class="progress-track">
-    <div class="progress-fill" id="progress-fill"></div>
-  </div>
 
-  <!-- Card -->
-  <div id="card-area">
-    <div class="card-wrapper">
-      <div class="card" id="card" onclick="flipCard()">
-        <div class="card-face card-front">
-          <div class="card-meta">
-            <span class="type-badge" id="card-type">Type</span>
-            <span id="card-num">Q1</span>
+  <!-- ============ DECK VIEW ============ -->
+  <div class="deck-view" id="deck-view">
+    <button class="back-link" onclick="goHome()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      All chapters
+    </button>
+
+    <header class="header">
+      <div class="eyebrow" id="deck-eyebrow">Honors Biology I · Study Guide</div>
+      <h1 class="title" id="deck-title"></h1>
+      <p class="subtitle">Tap a card to flip. Mark what you know and what needs review.</p>
+    </header>
+
+    <!-- Filter -->
+    <div class="controls" id="controls">
+      <span class="filter-label">Filter</span>
+      <button class="chip active" data-filter="all">All</button>
+      <button class="chip" data-filter="tf">True / False</button>
+      <button class="chip" data-filter="mc">Multiple Choice</button>
+      <button class="chip" data-filter="fb">Fill-in</button>
+      <button class="chip" data-filter="essay">Essay</button>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-bar">
+      <div><span id="current">1</span> / <span id="total">0</span></div>
+      <div class="progress-stats">
+        <span class="stat-known">Known · <span id="known-count">0</span></span>
+        <span class="stat-review">Review · <span id="review-count">0</span></span>
+      </div>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+
+    <div id="card-area">
+      <div class="card-wrapper">
+        <div class="card" id="card" onclick="flipCard()">
+          <div class="card-face card-front">
+            <div class="card-meta">
+              <span class="type-badge" id="card-type">Type</span>
+              <span id="card-num">Q1</span>
+            </div>
+            <div class="card-question" id="card-question"></div>
+            <div class="card-options" id="card-options"></div>
+            <div class="card-hint">Tap to reveal answer</div>
           </div>
-          <div class="card-question" id="card-question"></div>
-          <div class="card-options" id="card-options"></div>
-          <div class="card-hint">Tap to reveal answer</div>
-        </div>
-        <div class="card-face card-back">
-          <div class="card-meta">
-            <span class="type-badge">Answer</span>
-            <span id="card-num-back">Q1</span>
+          <div class="card-face card-back">
+            <div class="card-meta">
+              <span class="type-badge">Answer</span>
+              <span id="card-num-back">Q1</span>
+            </div>
+            <div class="answer-label">Correct Answer</div>
+            <div class="answer-text" id="card-answer"></div>
+            <div class="answer-explanation" id="card-explanation"></div>
           </div>
-          <div class="answer-label">Correct Answer</div>
-          <div class="answer-text" id="card-answer"></div>
-          <div class="answer-explanation" id="card-explanation"></div>
         </div>
       </div>
-    </div>
 
-    <div class="actions">
-      <button class="action-btn review" onclick="markCard('review')">Review again</button>
-      <button class="action-btn know" onclick="markCard('known')">I know this</button>
-    </div>
-
-    <div class="nav">
-      <button class="nav-btn" id="prev-btn" onclick="prevCard()">← Previous</button>
-      <div class="nav-center">
-        <button class="icon-btn" onclick="shuffleCards()" title="Shuffle">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
-        </button>
-        <button class="icon-btn" onclick="resetProgress()" title="Reset">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        </button>
+      <div class="actions">
+        <button class="action-btn review" onclick="markCard('review')">Review again</button>
+        <button class="action-btn know" onclick="markCard('known')">I know this</button>
       </div>
-      <button class="nav-btn" id="next-btn" onclick="nextCard()">Next →</button>
-    </div>
-  </div>
 
-  <!-- Completion screen -->
-  <div class="completion" id="completion">
-    <h2>Nicely done.</h2>
-    <p>You've made it through the deck.</p>
-    <div class="completion-stats">
-      <div class="completion-stat">
-        <span class="num" id="final-known">0</span>
-        <span class="lbl">Known</span>
-      </div>
-      <div class="completion-stat">
-        <span class="num" id="final-review">0</span>
-        <span class="lbl">To Review</span>
+      <div class="nav">
+        <button class="nav-btn" id="prev-btn" onclick="prevCard()">← Previous</button>
+        <div class="nav-center">
+          <button class="icon-btn" onclick="shuffleCards()" title="Shuffle">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
+          </button>
+          <button class="icon-btn" onclick="resetProgress()" title="Reset">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+          </button>
+        </div>
+        <button class="nav-btn" id="next-btn" onclick="nextCard()">Next →</button>
       </div>
     </div>
-    <button class="action-btn" onclick="restartDeck()" style="max-width: 200px; margin: 0 auto;">Start over</button>
-    <br><br>
-    <button class="action-btn review" onclick="reviewOnly()" style="max-width: 240px; margin: 0 auto;" id="review-only-btn">Review only flagged cards</button>
+
+    <div class="completion" id="completion">
+      <h2>Nicely done.</h2>
+      <p>You've made it through the deck.</p>
+      <div class="completion-stats">
+        <div class="completion-stat">
+          <span class="num" id="final-known">0</span>
+          <span class="lbl">Known</span>
+        </div>
+        <div class="completion-stat">
+          <span class="num" id="final-review">0</span>
+          <span class="lbl">To Review</span>
+        </div>
+      </div>
+      <button class="action-btn" onclick="restartDeck()" style="max-width: 200px; margin: 0 auto;">Start over</button>
+      <br><br>
+      <button class="action-btn review" onclick="reviewOnly()" style="max-width: 240px; margin: 0 auto;" id="review-only-btn">Review only flagged cards</button>
+    </div>
   </div>
 
 </div>
 
 <script>
-// ============ FLASHCARD DATA ============
-const allCards = [
-  // ---- True/False ----
-  { type: 'tf', typeLabel: 'True / False', num: 1,
-    q: 'The mating of garden-pea flowers can be easily controlled because the male and female reproductive parts are enclosed within the same flower.',
-    a: 'True',
-    exp: 'Pea flowers normally self-pollinate because both reproductive structures are inside one closed flower. This let Mendel control crosses precisely by manually pollinating them.' },
-  { type: 'tf', typeLabel: 'True / False', num: 2,
-    q: 'When Mendel cross-pollinated two varieties from the P generation that exhibited contrasting traits, he called the offspring the F₂ generation.',
-    a: 'False',
-    exp: 'The first offspring of the P (parental) generation is called the F₁ generation. The F₂ generation comes from crossing F₁ individuals with each other.' },
-  { type: 'tf', typeLabel: 'True / False', num: 3,
-    q: 'Individuals must exhibit a trait in order for it to appear in their offspring.',
-    a: 'False',
-    exp: 'A parent can carry a recessive allele without showing the trait (heterozygous carriers). Two heterozygous parents can produce a homozygous recessive child that does show it.' },
-  { type: 'tf', typeLabel: 'True / False', num: 4,
-    q: 'It is not possible for a gene to have more than two alleles.',
-    a: 'False',
-    exp: 'A single individual carries only two alleles per gene (one from each parent), but a gene can have many alleles in the population. ABO blood type is the classic example — three alleles: Iᴬ, Iᴮ, i.' },
-  { type: 'tf', typeLabel: 'True / False', num: 5,
-    q: 'If all of the offspring of a test cross have the dominant trait, then the genotype of the individual being tested is heterozygous.',
-    a: 'False',
-    exp: 'If all offspring show the dominant trait, the tested parent is most likely homozygous dominant. A heterozygous parent would produce roughly half offspring with the recessive trait.' },
-
-  // ---- Multiple Choice ----
-  { type: 'mc', typeLabel: 'Multiple Choice', num: 1,
-    q: 'The passing of traits from parents to offspring is called',
-    options: [['A','genetics'],['B','heredity'],['C','development'],['D','maturation']],
-    a: 'B — Heredity',
-    exp: 'Heredity is the passing of traits from one generation to the next. Genetics is the broader scientific study of heredity.' },
-  { type: 'mc', typeLabel: 'Multiple Choice', num: 2,
-    q: 'The scientific study of heredity is called',
-    options: [['A','meiosis'],['B','crossing-over'],['C','genetics'],['D','pollination']],
-    a: 'C — Genetics',
-    exp: 'Genetics is the field of science that studies how heredity works — how genes are passed and expressed.' },
-  { type: 'mc', typeLabel: 'Multiple Choice', num: 3,
-    q: "Step 1 of Mendel's garden pea experiment, allowing each variety of garden pea to self-pollinate for several generations, produced the",
-    options: [['A','F₁ generation'],['B','F₂ generation'],['C','P generation'],['D','P₁ generation']],
-    a: 'C — P generation',
-    exp: 'Self-pollinating for many generations created true-breeding parental lines. Those true-breeding parents are the P (parental) generation, the starting point of the crosses.' },
-  { type: 'mc', typeLabel: 'Multiple Choice', num: 4,
-    q: 'F₂ : F₁ ::',
-    options: [['A','P : F₁'],['B','F₁ : F₂'],['C','F₁ : P'],['D','dominant trait : recessive trait']],
-    a: 'C — F₁ : P',
-    exp: 'This is an analogy: F₂ comes from F₁, just as F₁ comes from P. Each generation produces the next in sequence.' },
-  { type: 'mc', typeLabel: 'Multiple Choice', num: 5,
-    q: 'An individual heterozygous for a trait and an individual homozygous recessive for the trait are crossed and produce many offspring that are',
-    options: [['A','all the same genotype'],['B','of two different phenotypes'],['C','of three different phenotypes'],['D','all the same phenotype']],
-    a: 'B — Two different phenotypes',
-    exp: 'A test cross of Tt × tt produces half Tt (dominant phenotype) and half tt (recessive phenotype) — two different phenotypes in a 1:1 ratio.' },
-  { type: 'mc', typeLabel: 'Multiple Choice', num: 6,
-    q: 'Tallness is dominant to shortness in pea plants. Which of the following represents a genotype of a pea plant that is heterozygous for tallness?',
-    options: [['A','Ts'],['B','TT'],['C','Tt'],['D','tt']],
-    a: 'C — Tt',
-    exp: 'Heterozygous means having two different alleles for a trait. Tt has one dominant (T) and one recessive (t) allele. TT is homozygous dominant; tt is homozygous recessive.' },
-  { type: 'mc', typeLabel: 'Multiple Choice', num: 7,
-    q: "Mendel's finding that the inheritance of one trait had no effect on the inheritance of another became known as the",
-    options: [['A','law of dominance'],['B','law of universal inheritance'],['C','law of segregation'],['D','law of independent assortment']],
-    a: 'D — Law of independent assortment',
-    exp: "Mendel's law of independent assortment states that alleles for different traits are distributed to gametes independently of one another. This holds when the genes are on different chromosomes." },
-  { type: 'mc', typeLabel: 'Multiple Choice', num: 13,
-    q: 'In rabbits, black fur (B) is dominant to brown fur (b). A Bb × Bb cross is shown in the Punnett square below. The device shown, used to determine the probable outcome of genetic crosses, is called a',
-    punnett: { p1: 'B', p2: 'b', q1: 'b', q2: 'b', cells: ['BB','Bb','Bb','bb'] },
-    options: [['A','Mendelian box'],['B','Punnett square'],['C','genetic graph'],['D','pedigree']],
-    a: 'B — Punnett square',
-    exp: 'A Punnett square is the diagram named after Reginald Punnett that predicts genotype and phenotype ratios from a genetic cross.' },
-  { type: 'mc', typeLabel: 'Multiple Choice', num: 14,
-    q: 'Referring to the Bb × Bb rabbit cross (black fur B dominant to brown b), both of the parents in the cross are',
-    punnett: { p1: 'B', p2: 'b', q1: 'b', q2: 'b', cells: ['BB','Bb','Bb','bb'] },
-    options: [['A','black'],['B','brown'],['C','homozygous dominant'],['D','homozygous recessive']],
-    a: 'A — Black',
-    exp: 'Both parents are Bb (heterozygous). Because B (black) is dominant over b (brown), having even one B allele means the rabbit shows the black phenotype.' },
-  { type: 'mc', typeLabel: 'Multiple Choice', num: 15,
-    q: 'In the Bb × Bb rabbit Punnett square, the phenotype of the offspring indicated by box 3 (genotype Bb) would be',
-    punnett: { p1: 'B', p2: 'b', q1: 'b', q2: 'b', cells: ['BB','Bb','Bb','bb'] },
-    options: [['A','brown'],['B','black'],['C','a mixture of brown and black'],['D','None of the above']],
-    a: 'B — Black',
-    exp: 'Box 3 has the genotype Bb. Since B (black) is dominant over b (brown), one B allele is enough to make the rabbit black.' },
-  { type: 'mc', typeLabel: 'Multiple Choice', num: 16,
-    q: 'In the Bb × Bb rabbit Punnett square, the genotypic ratio of the possible offspring would be',
-    punnett: { p1: 'B', p2: 'b', q1: 'b', q2: 'b', cells: ['BB','Bb','Bb','bb'] },
-    options: [['A','1:1'],['B','3:1'],['C','1:3'],['D','1:2:1']],
-    a: 'D — 1:2:1',
-    exp: 'The four boxes give 1 BB : 2 Bb : 1 bb — a 1:2:1 genotypic ratio. The phenotypic ratio is 3:1 (black to brown), but the genotypic ratio counts each genotype separately.' },
-  { type: 'mc', typeLabel: 'Multiple Choice', num: 17,
-    q: 'What is the expected genotypic ratio resulting from a homozygous dominant × heterozygous monohybrid cross? (e.g., TT × Tt)',
-    options: [['A','4:0'],['B','2:2'],['C','1:2:1'],['D','1:3:1']],
-    a: 'B — 2:2 (or 1:1)',
-    exp: 'TT × Tt produces 2 TT and 2 Tt offspring — a 2:2 ratio (which simplifies to 1:1). Only two genotypes are possible since no tt can be produced.' },
-  { type: 'mc', typeLabel: 'Multiple Choice', num: 18,
-    q: 'What is the expected genotypic ratio resulting from a heterozygous × heterozygous monohybrid cross? (e.g., Tt × Tt)',
-    options: [['A','1:2:1'],['B','1:3:1'],['C','1:2'],['D','1:0']],
-    a: 'A — 1:2:1',
-    exp: 'Tt × Tt produces 1 TT : 2 Tt : 1 tt — the classic 1:2:1 genotypic ratio. The phenotypic ratio is 3:1.' },
-  { type: 'mc', typeLabel: 'Multiple Choice', num: 19,
-    q: 'What is the expected phenotypic ratio resulting from a homozygous dominant × heterozygous monohybrid cross? (e.g., TT × Tt)',
-    options: [['A','1:3:1'],['B','1:2:1'],['C','2:2'],['D','4:0']],
-    a: 'D — 4:0',
-    exp: 'All offspring of TT × Tt inherit at least one T allele, so 100% show the dominant phenotype. The ratio is 4:0 (all dominant, none recessive).' },
-  { type: 'mc', typeLabel: 'Multiple Choice', num: 20,
-    q: 'What is the probability that the offspring of a homozygous dominant individual and a homozygous recessive individual will exhibit the dominant phenotype?',
-    options: [['A','25%'],['B','50%'],['C','66%'],['D','100%']],
-    a: 'D — 100%',
-    exp: 'TT × tt produces all Tt offspring. Every offspring has one dominant allele, so 100% show the dominant phenotype.' },
-  { type: 'mc', typeLabel: 'Multiple Choice', num: 21,
-    q: 'Which of the following traits is controlled by multiple alleles in humans?',
-    options: [['A','hair color'],['B','blood type'],['C',"widow's peak"],['D','tongue-rolling']],
-    a: 'B — Blood type',
-    exp: 'The ABO blood type gene has three alleles in the human population: Iᴬ, Iᴮ, and i. Most genes have only two common alleles.' },
-  { type: 'mc', typeLabel: 'Multiple Choice', num: 22,
-    q: 'What would be the blood type of a person who inherited a B allele from one parent and a recessive (i) allele from the other?',
-    options: [['A','type A'],['B','type B'],['C','type AB'],['D','type BO']],
-    a: 'B — Type B',
-    exp: 'The genotype Iᴮi produces type B blood. The Iᴮ allele is dominant over i, so the recessive allele is masked. There is no "BO" blood type.' },
-  { type: 'mc', typeLabel: 'Multiple Choice', num: 23,
-    q: 'The ABO blood type gene has three alleles. How many possible phenotypes are there?',
-    options: [['A','three'],['B','four'],['C','six'],['D','none of the above']],
-    a: 'B — Four',
-    exp: 'There are four blood type phenotypes: A, B, AB, and O. AB exists because Iᴬ and Iᴮ are codominant — both are expressed when present together.' },
-
-  // ---- Fill-in / Completion ----
-  { type: 'fb', typeLabel: 'Fill-in', num: 1,
-    q: 'A reproductive process in which fertilization occurs within a single plant is ___.',
-    a: 'Self-pollination',
-    exp: 'Self-pollination happens when pollen from a flower fertilizes the egg of the same flower or another flower on the same plant. Pea plants normally self-pollinate.' },
-  { type: 'fb', typeLabel: 'Fill-in', num: 2,
-    q: 'A(n) ___ cross is a cross that involves one pair of contrasting traits.',
-    a: 'Monohybrid',
-    exp: 'A monohybrid cross studies one trait (e.g., flower color only). A dihybrid cross studies two traits at once.' },
-  { type: 'fb', typeLabel: 'Fill-in', num: 3,
-    q: "In Mendel's experiments, a trait that disappeared in the F₁ generation but reappeared in the F₂ generation was always a(n) ___ trait.",
-    a: 'Recessive',
-    exp: 'Recessive traits are masked when paired with a dominant allele. They reappear in F₂ when two heterozygous F₁ individuals each pass on the recessive allele.' },
-  { type: 'fb', typeLabel: 'Fill-in', num: 4,
-    q: 'Different forms of a particular gene are called ___.',
-    a: 'Alleles',
-    exp: 'Alleles are variants of the same gene. For example, the gene for pea color has a yellow allele and a green allele.' },
-  { type: 'fb', typeLabel: 'Fill-in', num: 5,
-    q: 'An organism that has two identical alleles for a trait is called ___.',
-    a: 'Homozygous',
-    exp: 'Homozygous means "same alleles" — either TT (homozygous dominant) or tt (homozygous recessive). Heterozygous means having two different alleles (Tt).' },
-  { type: 'fb', typeLabel: 'Fill-in', num: 6,
-    q: 'If some of the offspring of a test cross have the recessive trait, then the genotype of the individual being tested is ___.',
-    a: 'Heterozygous',
-    exp: 'In a test cross, the unknown is crossed with a homozygous recessive (tt). If any offspring show the recessive trait, the unknown must have contributed a recessive allele — meaning it is heterozygous (Tt).',
-    note: 'Note: the original answer key said "homozygous recessive," but a homozygous recessive parent would produce ALL recessive offspring. "Some recessive" offspring means the tested parent must be heterozygous.' },
-  { type: 'fb', typeLabel: 'Fill-in', num: 7,
-    q: 'The position of a gene on a chromosome is called its ___.',
-    a: 'Locus',
-    exp: "Each gene has a specific locus (location) on a particular chromosome. The plural is loci. Think of it as the gene's address." },
-
-  // ---- Essay ----
-  { type: 'essay', typeLabel: 'Essay', num: 1,
-    q: 'Describe how genotype and phenotype are related, defining both terms in your answer.',
-    a: 'Genotype determines phenotype.',
-    exp: 'Genotype is the genetic makeup of an organism — the specific combination of alleles it carries for a trait (e.g., TT, Tt, or tt). Phenotype is the observable physical expression of those alleles — what the trait actually looks like (e.g., tall or short).\n\nThe two are related because genotype determines phenotype: the alleles an organism inherits decide which traits are expressed. Dominant alleles mask recessive ones, so TT and Tt produce the same phenotype (tall), while only tt shows the recessive phenotype (short). Environmental factors can also influence phenotype, but the genotype sets the underlying instructions.' },
-  { type: 'essay', typeLabel: 'Essay', num: 2,
-    q: 'Explain codominance and give an example.',
-    a: 'Both alleles are fully expressed.',
-    exp: 'Codominance is a pattern of inheritance in which both alleles in a heterozygous individual are fully and separately expressed in the phenotype — neither one masks the other.\n\nThe classic example is human ABO blood type. A person with the genotype Iᴬ Iᴮ has type AB blood, expressing both the A antigen and the B antigen on their red blood cells. Another example is roan cattle, where a heterozygous animal has both red hairs and white hairs visible at the same time (not blended pink).\n\nNote: codominance is different from incomplete dominance, where the alleles blend (red + white = pink).' },
-  { type: 'essay', typeLabel: 'Essay', num: 3,
-    q: 'All of the offspring resulting from a cross between a red snapdragon and a white snapdragon are pink. What is the possible explanation for this?',
-    a: 'Incomplete dominance.',
-    exp: 'This is incomplete dominance — a pattern of inheritance where neither allele is fully dominant, so the heterozygous phenotype is a blend or intermediate of the two homozygous phenotypes.\n\nThe red parent (RR) and the white parent (WW or R\'R\') each pass one allele to the offspring, giving every F₁ offspring the heterozygous genotype (RW). Because neither red nor white is fully dominant, the resulting phenotype is pink — a blend.\n\nThis differs from codominance: in codominance both colors would appear separately (red and white patches), but in incomplete dominance they blend into a single intermediate color.' },
-  { type: 'essay', typeLabel: 'Essay', num: 4,
-    q: 'A woman with blood type A had a baby with blood type O. She is trying to claim that Post Malone (blood type B) was the father of her child. Could Malone be the father? Why or why not? (4 points)',
-    a: 'Yes — it is possible.',
-    exp: 'Yes, Post Malone could be the father.\n\nBlood type O has the genotype ii (homozygous recessive). For the baby to be type O, BOTH parents must have contributed an i allele.\n\n• The mother is type A. Her genotype could be Iᴬ Iᴬ or Iᴬ i. Since the baby is type O, she must be Iᴬ i — she carries a recessive i allele and passed it to the baby.\n\n• Post Malone is type B. His genotype could be Iᴮ Iᴮ or Iᴮ i. If he is Iᴮ i, he also carries a recessive i allele and could have passed it to the baby.\n\nSo if Post Malone has the genotype Iᴮ i, he and the mother could absolutely produce a type O baby. The blood typing does not rule him out as the father.' },
-  { type: 'essay', typeLabel: 'Essay', num: 5,
-    q: 'What are four specific, numeric ways to express the probability of an event that occurs 250 times out of 1,000 total trials?',
-    a: '1/4, 0.25, 25%, 1:3',
-    exp: 'Probability can be expressed in four equivalent ways:\n\n• Fraction: 250/1000 simplifies to 1/4\n• Decimal: 0.25\n• Percentage: 25%\n• Ratio: 1:3 (1 occurrence for every 3 non-occurrences — note that 250 out of 1000 means 250 successes and 750 failures)\n\nAll four describe the same probability — just in different formats.' },
+// ============ CHAPTER DEFINITIONS ============
+const chapters = [
+  {
+    id: 'ch5-mitosis',
+    label: 'Chapter 5.1 / 5.2',
+    name: 'Cell Cycle & Mitosis',
+    italicName: false,
+    titleHTML: 'Chapter 5.1/5.2 — <em>Cell Cycle &amp; Mitosis</em>',
+  },
+  {
+    id: 'ch5-meiosis',
+    label: 'Chapter 5',
+    name: 'Meiosis',
+    titleHTML: 'Chapter 5 — <em>Meiosis</em>',
+  },
+  {
+    id: 'ch6',
+    label: 'Chapter 6',
+    name: 'Mendelian Genetics',
+    titleHTML: 'Chapter 6 — <em>Mendelian Genetics</em>',
+  },
 ];
 
+// ============ ALL CHAPTER DECKS ============
+const decks = {
+  'ch5-mitosis': [
+    // True/False
+    { type: 'tf', typeLabel: 'True / False', num: 1, q: 'Cell division in bacteria and eukaryotes takes place in precisely the same manner.', a: 'False', exp: 'Bacteria divide by binary fission — a simpler process with no spindle, no nucleus to break down, and a single circular chromosome. Eukaryotes use mitosis, which involves chromosome condensation, spindle fibers, and a multi-phase cell cycle.' },
+    { type: 'tf', typeLabel: 'True / False', num: 2, q: 'A karyotype is a type of gene.', a: 'False', exp: 'A karyotype is a picture or display of all the chromosomes in a cell, organized by size and shape. It is used to detect chromosomal abnormalities (like an extra chromosome 21 in Down syndrome). It is not a gene.' },
+    { type: 'tf', typeLabel: 'True / False', num: 3, q: 'Cells spend most of their lifetime in interphase.', a: 'True', exp: 'Interphase (G₁ + S + G₂) takes up roughly 90% of the cell cycle. This is when the cell grows, copies its DNA, and prepares for division. Mitosis itself is a much shorter phase.' },
+    { type: 'tf', typeLabel: 'True / False', num: 4, q: 'The cell cycle has checkpoints that act to inhibit uncontrolled cell division.', a: 'True', exp: 'Checkpoints at G₁, G₂, and M phase verify that DNA is undamaged and conditions are right before allowing the cell to continue. When checkpoint proteins fail, uncontrolled division can occur — this is the basis of cancer.' },
+    { type: 'tf', typeLabel: 'True / False', num: 5, q: 'Cancer is a disease characterized by uncontrolled cell division.', a: 'True', exp: 'Cancer cells ignore the normal checkpoint signals and divide uncontrollably, forming tumors. They often have mutations in genes that regulate the cell cycle (like p53 or Rb).' },
+    { type: 'tf', typeLabel: 'True / False', num: 6, q: 'Spindle fibers move chromosomes during cell division.', a: 'True', exp: 'Spindle fibers are microtubules that attach to centromeres and pull sister chromatids apart toward opposite poles of the cell during anaphase.' },
+    // Multiple Choice
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 7, q: 'Binary fission', options: [['A','occurs when two cells collide with each other'],['B','produces excess energy'],['C','creates new species'],['D','is the process by which bacteria divide']], a: 'D — Is the process by which bacteria divide', exp: 'Binary fission is how prokaryotes (bacteria) reproduce asexually. The single circular chromosome is copied, the cell elongates, and then splits into two identical daughter cells.' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 8, q: 'The point at which two chromatids are attached to each other in a chromosome is called a(n)', options: [['A','chloroplast'],['B','centromere'],['C','gamete'],['D','centriole']], a: 'B — Centromere', exp: 'The centromere is the constricted region where sister chromatids are joined. Spindle fibers attach here during cell division to pull the chromatids apart.' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 9, q: 'Chromatids are', options: [['A','dense patches within the nucleus'],['B','bacterial chromosomes'],['C','joined strands of duplicated genetic material'],['D','prokaryotic nuclei']], a: 'C — Joined strands of duplicated genetic material', exp: 'After DNA replication, each chromosome consists of two identical sister chromatids joined at the centromere. They are duplicated copies of the same genetic information.' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 10, q: 'The chromosomes in your body', options: [['A','exist in 23 pairs'],['B','each contain thousands of genes'],['C','form right before cells divide'],['D','All of the above']], a: 'D — All of the above', exp: 'Human body cells have 23 pairs of chromosomes (46 total). Each chromosome contains thousands of genes. And chromosomes condense into their visible, compact form right before cells divide (during prophase). All three statements are true.' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 11, q: 'Homologous chromosomes are pairs of chromosomes containing genes that code for', options: [['A','different traits'],['B','the same traits'],['C','DNA'],['D','cytosol']], a: 'B — The same traits', exp: 'Homologous chromosomes carry genes for the same traits at the same locations (loci) — but the alleles may be different. For example, both chromosomes in a pair have a gene for eye color, but one might code for blue and the other for brown.' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 12, q: 'The X and Y chromosomes are called the', options: [['A','extra chromosomes'],['B','phenotypes'],['C','sex chromosomes'],['D','All of the above']], a: 'C — Sex chromosomes', exp: 'X and Y are specifically called the sex chromosomes because they determine biological sex (XX = female, XY = male). The other 22 pairs are called autosomes.' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 13, q: 'female : XX ::', options: [['A','female : gametes'],['B','female : eggs'],['C','male : YY'],['D','male : XY']], a: 'D — Male : XY', exp: 'This is an analogy. Just as XX is the chromosome pair for females, XY is the chromosome pair for males. Males are not YY — they always have one X.' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 14, q: "The individual stage of the cell cycle that occupies most of the cell's life is", options: [['A','G₁'],['B','M'],['C','G₂'],['D','S']], a: 'A — G₁', exp: 'G₁ (Gap 1) is the longest single phase of the cell cycle. During G₁, the cell grows, performs its normal functions, and prepares for DNA replication. M phase (mitosis) is the shortest.' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 15, q: 'Which of the following shows the correct sequence of the cell cycle?', options: [['A','C → M → G₁ → S → G₂'],['B','S → G₁ → G₂ → M → C'],['C','G₁ → S → G₂ → M → C'],['D','None of the above']], a: 'C — G₁ → S → G₂ → M → C', exp: 'The cell cycle order: G₁ (growth) → S (synthesis/DNA copying) → G₂ (preparation) → M (mitosis) → C (cytokinesis). The first three phases together make up interphase.' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 16, q: 'The synthesis (S) phase is characterized by', options: [['A','DNA replication'],['B','cell division'],['C','replication of mitochondria and other organelles'],['D','the division of cytoplasm']], a: 'A — DNA replication', exp: 'During S phase ("synthesis"), the cell copies its entire DNA so each daughter cell will receive a complete set. After S phase, every chromosome consists of two identical sister chromatids.' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 17, q: 'The first three phases of the cell cycle are collectively known as', options: [['A','cellular respiration'],['B','telophase'],['C','mitosis'],['D','interphase']], a: 'D — Interphase', exp: 'Interphase = G₁ + S + G₂. It is the long preparation period between divisions when the cell grows, copies DNA, and gets ready for mitosis.' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 18, q: 'cell growth : G₁ ::', options: [['A','mitosis : C'],['B','mitosis : meiosis'],['C','mitochondria replication : S'],['D','DNA copying : S']], a: 'D — DNA copying : S', exp: 'Analogy: G₁ is the phase when cell growth happens, just as S is the phase when DNA copying happens. Each phase has a defining activity.' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 19, q: 'metaphase : prophase ::', options: [['A','G₁ : M'],['B','G₂ : S'],['C','M : C'],['D','autotroph : producer']], a: 'B — G₂ : S', exp: 'Analogy: metaphase comes after prophase in mitosis, just as G₂ comes after S in interphase. Both pairs describe a phase and the phase that precedes it.' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 20, q: 'The phase of mitosis that is characterized by the arrangement of all chromosomes along the equator of the cell is called', options: [['A','telophase'],['B','metaphase'],['C','anaphase'],['D','prophase']], a: 'B — Metaphase', exp: 'In metaphase, chromosomes line up along the equator (middle) of the cell. The word "meta" means "middle." Memory trick: Metaphase = Middle.' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 21, q: 'As a result of mitosis, each of the two new cells produced from the parent cell during cytokinesis', options: [['A','receives a few chromosomes from the parent cell'],['B','receives an exact copy of all the chromosomes present in the parent cell'],['C','donates a chromosome to the parent cell'],['D','receives exactly half the chromosomes from the parent cell']], a: 'B — Receives an exact copy of all the chromosomes', exp: 'Mitosis produces two genetically identical daughter cells. Each one has the full set of chromosomes (in humans, 46) — not half, not a few. Meiosis is what produces cells with half the chromosomes.' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 22, q: 'Mitosis is a process by which', options: [['A','DNA is replicated'],['B','cytokinesis occurs'],['C','cells grow in size'],["D","a cell's nucleus divides"]], a: "D — A cell's nucleus divides", exp: 'Mitosis is specifically the division of the nucleus. The cytoplasm divides afterward in a separate process called cytokinesis. DNA replication happens earlier, during S phase.' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 23, q: 'Refer to the four diagrams of mitosis stages. A shows chromosomes dispersed in the nucleus, B shows chromosomes attached to spindle fibers at the poles, C shows chromosomes lined up at the equator, and D shows two separating cells. Which of the following correctly indicates the order in which these events occur?', showDiagram: 'mitosis', options: [['A','A, B, C, D'],['B','C, B, A, D'],['C','B, A, C, D'],['D','A, C, B, D']], a: 'B — C, B, A, D', exp: 'Based on the diagram labels: A = interphase (chromosomes loose in nucleus), B = prophase/early metaphase (chromosomes attached to spindle), C = metaphase (lined up at equator), D = telophase/cytokinesis (two cells separating). The correct order would be prophase → metaphase → anaphase → telophase.' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 24, q: 'Refer to the mitosis stage diagrams. During which stage do the centromeres divide?', showDiagram: 'mitosis', options: [['A','A (anaphase)'],['B','B'],['C','C'],['D','D']], a: 'A — Anaphase', exp: 'Centromeres divide during anaphase, allowing the sister chromatids to separate and move to opposite poles of the cell. "A" for "Anaphase" and "Apart" — a useful memory trick.' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 25, q: 'Cytokinesis in plant cells involves the formation of', options: [['A','replicated chromosomes'],['B','a cell plate'],['C','spindle fibers'],['D','centrioles']], a: 'B — A cell plate', exp: 'Plant cells have rigid cell walls, so they cannot simply pinch in two like animal cells do. Instead, a cell plate forms in the middle and grows outward, eventually becoming a new cell wall that separates the two daughter cells.' },
+    // Fill-in
+    { type: 'fb', typeLabel: 'Fill-in', num: 26, q: 'In bacteria, cell division takes place in three stages. First the ___ is copied, then segregation, then cell splits.', a: 'DNA', exp: 'In binary fission, the bacterial DNA (a single circular chromosome) is copied first. Then the two copies separate to opposite ends of the cell. Finally, the cell pinches in half, giving two identical daughter cells.' },
+    { type: 'fb', typeLabel: 'Fill-in', num: 27, q: 'A(n) ___ is a segment of a DNA molecule that carries the instructions for producing a specific trait.', a: 'Gene', exp: 'A gene is a section of DNA that codes for a specific protein or trait. Genes are the basic units of heredity. A chromosome contains thousands of genes arranged along its length.' },
+    { type: 'fb', typeLabel: 'Fill-in', num: 28, q: '"Cables" made of microtubules that extend from the poles of a cell to the centromeres during cell division are called ___.', a: 'Spindle fibers', exp: 'Spindle fibers are made of microtubules. They extend from centrioles (at the poles) and attach to the centromeres of chromosomes. During anaphase, they shorten to pull sister chromatids apart.' },
+    { type: 'fb', typeLabel: 'Fill-in', num: 29, q: 'In mitosis, metaphase follows ___.', a: 'Prophase', exp: 'The order of mitosis: Prophase → Metaphase → Anaphase → Telophase (PMAT). Prophase is when chromosomes condense and the nuclear envelope breaks down; metaphase is when they line up at the equator.' },
+    { type: 'fb', typeLabel: 'Fill-in', num: 30, q: 'Chromosomes coil up and become visible during ___.', a: 'Prophase', exp: 'During prophase (the first stage of mitosis), the long, thread-like chromatin coils tightly to form compact, visible chromosomes. The nuclear envelope also breaks down and spindle fibers begin to form.' },
+    { type: 'fb', typeLabel: 'Fill-in', num: 31, q: 'In eukaryotic cells, ___ takes place after the nucleus divides.', a: 'Cytokinesis', exp: 'Cytokinesis is the division of the cytoplasm, splitting one cell into two. It happens after mitosis (nuclear division) is complete. In animal cells, the cell pinches in two; in plant cells, a cell plate forms.' },
+    // Essay
+    { type: 'essay', typeLabel: 'Essay', num: 32, q: 'Define what a karyotype is and explain how it can be used to diagnose Down syndrome. (4 points)', a: 'A karyotype reveals an extra chromosome 21.', exp: 'A karyotype is a visual display or photograph of all the chromosomes in a cell, organized in pairs by size, shape, and banding pattern. It is made by collecting cells (often from a blood sample or amniotic fluid), staining the chromosomes, photographing them under a microscope, and arranging them in order.\n\nTo diagnose Down syndrome, doctors create a karyotype and look at chromosome pair 21. A typical person has two copies of chromosome 21. A person with Down syndrome has three copies — a condition called trisomy 21. By counting the chromosomes in the karyotype, doctors can clearly see this extra chromosome and confirm the diagnosis.\n\nKaryotypes can also detect other chromosomal abnormalities like Turner syndrome (one X), Klinefelter syndrome (XXY), and various deletions or translocations.' },
+    { type: 'essay', typeLabel: 'Essay', num: 33, q: 'Explain what common component makes up a gene, chromosome, and chromatin, and arrange these structures from largest to smallest. (5 points)', a: 'DNA — Chromosome → Chromatin → Gene', exp: 'The common component that makes up all three structures is DNA (deoxyribonucleic acid). DNA is the molecule that carries genetic information in the form of a sequence of nucleotide bases (A, T, G, C).\n\n• A gene is a specific segment of DNA that codes for one trait or protein. It is the smallest of the three.\n\n• Chromatin is the relaxed, thread-like form of DNA wrapped around proteins (histones). This is how DNA exists most of the time, when the cell is not dividing. Chromatin contains many genes.\n\n• A chromosome is the tightly coiled, condensed form of chromatin that appears during cell division. Each chromosome contains thousands of genes and is the largest of the three structures.\n\nFrom largest to smallest: Chromosome → Chromatin → Gene.' },
+  ],
+
+  'ch5-meiosis': [
+    // True/False
+    { type: 'tf', typeLabel: 'True / False', num: 1, q: 'Independent assortment occurs when each pair of chromosomes segregates (separates) independently.', a: 'True', exp: 'Independent assortment is one of the main reasons meiosis produces genetic variety. During meiosis I, each pair of homologous chromosomes lines up and separates independently of every other pair — so the combinations of maternal and paternal chromosomes that end up in each gamete are random.' },
+    { type: 'tf', typeLabel: 'True / False', num: 2, q: 'Gametogenesis occurs only in males.', a: 'False', exp: 'Gametogenesis is the production of gametes (sex cells) and happens in both sexes. In males it is called spermatogenesis (produces sperm); in females it is called oogenesis (produces eggs).' },
+    { type: 'tf', typeLabel: 'True / False', num: 3, q: 'In sexual reproduction, two parents each form haploid cells, which join to form offspring.', a: 'True', exp: 'Each parent produces haploid gametes (n) through meiosis. Fertilization joins one sperm and one egg, restoring the diploid (2n) chromosome number in the offspring.' },
+    { type: 'tf', typeLabel: 'True / False', num: 4, q: 'Some eukaryotes reproduce asexually, and some reproduce sexually.', a: 'True', exp: 'Many eukaryotes (plants, fungi, some animals) can reproduce both ways. Some, like bdelloid rotifers, only reproduce asexually. Most complex animals reproduce sexually, but asexual reproduction is common in eukaryotes overall.' },
+    { type: 'tf', typeLabel: 'True / False', num: 5, q: 'In most animals, including humans, meiosis produces sperm and egg cells.', a: 'True', exp: 'In humans and most animals, meiosis happens in the reproductive organs (testes/ovaries) to make haploid gametes — sperm in males and egg cells in females. All other body cells are made by mitosis.' },
+    { type: 'tf', typeLabel: 'True / False', num: 6, q: 'During the diploid life cycle, all of the cells are diploid.', a: 'False', exp: 'Even in a diploid-dominant life cycle (like humans), the gametes are haploid. So not ALL cells are diploid — the sperm and egg cells are haploid. Only the body (somatic) cells are diploid.' },
+    { type: 'tf', typeLabel: 'True / False', num: 7, q: 'Meiosis begins with one haploid cell and ends with four diploid cells.', a: 'False', exp: 'It is the opposite! Meiosis starts with one DIPLOID cell (2n) and ends with four HAPLOID cells (n). It cuts the chromosome number in half, which is essential for sexual reproduction.' },
+    // Multiple Choice
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 8, q: 'Separation of homologous chromosomes occurs during', options: [['A','mitosis'],['B','meiosis I'],['C','meiosis II'],['D','fertilization']], a: 'B — Meiosis I', exp: 'Homologous chromosomes (the matching pairs) separate during anaphase I of meiosis I. This is what reduces the chromosome number from diploid to haploid. In meiosis II, the sister chromatids separate — similar to mitosis.' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 9, q: 'The difference between anaphase of mitosis and anaphase I of meiosis is that', options: [['A','the chromosomes line up at the equator in anaphase I'],['B','centromeres do not exist in anaphase I'],['C','chromatids do not separate at the centromere in anaphase I'],['D','crossing-over occurs only in anaphase of mitosis']], a: 'C — Chromatids do not separate at the centromere in anaphase I', exp: 'In anaphase of MITOSIS, sister chromatids separate at the centromere. In anaphase I of MEIOSIS, the homologous chromosomes separate — but the sister chromatids stay attached at the centromere. They only separate later, in anaphase II.' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 10, q: 'When crossing-over takes place, chromosomes', options: [['A','mutate in the first division'],['B','produce new genes'],['C','decrease in number'],['D','exchange corresponding segments of DNA']], a: 'D — Exchange corresponding segments of DNA', exp: 'During prophase I, homologous chromosomes pair up and exchange matching segments of DNA. This shuffles alleles and creates new genetic combinations — it is a major source of genetic variation in offspring.' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 11, q: 'Using a cell with a diploid number of 4 chromosomes, which of the diagrams depicts a cell at the end of meiosis I?', showDiagram: 'meiosis', options: [['A','B'],['B','C'],['C','D'],['D','E']], a: 'D — E', exp: 'At the end of meiosis I, the cell has divided into two separate cells, and each one contains haploid (half) the chromosomes — but each chromosome still has two sister chromatids attached. Diagram E shows two cells each with 2 duplicated chromosomes, which matches.' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 12, q: 'Which of the diagrams depicts a cell at the end of meiosis II?', showDiagram: 'meiosis', options: [['A','A'],['B','B'],['C','C'],['D','D']], a: 'A — A', exp: 'At the end of meiosis II, the sister chromatids have separated. Each of the four final cells contains single (unduplicated) chromosomes, with half the original number. Diagram A shows a cell with 2 single chromosomes — the haploid result.' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 13, q: 'Which of the diagrams depicts a cell at the end of mitosis, but before the new cell cycle begins?', showDiagram: 'meiosis', options: [['A','A'],['B','B'],['C','C'],['D','None of the above']], a: 'B — B', exp: 'After mitosis, the daughter cell has the SAME number of chromosomes as the parent (diploid, 2n = 4), and the chromosomes have not yet been duplicated for the next round. Diagram B shows the diploid number of duplicated chromosomes — the end-of-mitosis state before the cycle restarts.' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 14, q: 'Crossing-over occurs', options: [['A','during prophase 2'],['B','during fertilization'],['C','during prophase I'],['D','at the centromere']], a: 'C — During prophase I', exp: 'Crossing-over happens early in meiosis I, during prophase I, when homologous chromosomes pair up (forming tetrads) and exchange segments of DNA. By meiosis II, the homologs are no longer together, so crossing-over cannot happen.' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 15, q: 'Which of the following does NOT provide new genetic combinations?', options: [['A','random fertilization'],['B','cytokinesis'],['C','independent assortment'],['D','crossing-over']], a: 'B — Cytokinesis', exp: 'Cytokinesis is just the splitting of the cytoplasm at the end of cell division — it does not shuffle genes. The other three (random fertilization, independent assortment, and crossing-over) are all major sources of genetic variation.' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 16, q: 'Some organisms are capable of asexual or sexual reproduction. Under favorable conditions, reproduction proceeds asexually. When conditions become more stressful, reproduction switches to a sexual mode. Why?', options: [['A','Sexual reproduction is simple and more rapid, allowing larger numbers of offspring'],['B','Sexual reproduction requires two individuals who provide mutual nutrient support'],['C','Asexual reproduction requires more energy'],['D','Sexual reproduction produces individuals with new combinations of recombined chromosomes, which increases diversity']], a: 'D — Sexual reproduction produces individuals with new combinations, which increases diversity', exp: 'When conditions are stressful, genetic diversity helps a population survive — some offspring may have combinations that handle the new conditions better. Sexual reproduction creates this variety through crossing-over, independent assortment, and random fertilization. Asexual reproduction produces genetic copies, which is fine when things are stable but risky when they are not.' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 17, q: 'Which of the following is NOT a type of asexual reproduction?', options: [['A','budding'],['B','fragmentation'],['C','fission'],['D','fertilization']], a: 'D — Fertilization', exp: 'Fertilization is the joining of a sperm and egg — that is sexual reproduction. Budding (yeast, hydra), fragmentation (starfish), and fission (bacteria) are all asexual — they involve one parent producing genetically identical offspring.' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 18, q: 'Which of the following is NOT a type of sexual life cycle?', options: [['A','alternation of generations'],['B','haploid'],['C','diploid'],['D','cellular']], a: 'D — Cellular', exp: '"Cellular" is not a type of life cycle. The three main sexual life cycles are: diploid-dominant (like humans, where most cells are 2n), haploid-dominant (like many fungi), and alternation of generations (like plants, alternating between haploid and diploid forms).' },
+    // Fill-in
+    { type: 'fb', typeLabel: 'Fill-in', num: 19, q: 'The stage of meiosis during which homologous chromosomes line up along the equator of the cell is called ___.', a: 'Metaphase I', exp: 'In Metaphase I, the homologous chromosomes pair up as tetrads and line up at the equator of the cell. This is different from metaphase of mitosis (or metaphase II), where individual chromosomes — not pairs — line up.' },
+    { type: 'fb', typeLabel: 'Fill-in', num: 20, q: 'The haploid cells resulting from meiosis in either males or females are called ___.', a: 'Gametes', exp: 'Gametes are the sex cells — sperm in males and eggs in females. They are haploid (n), meaning they have half the normal chromosome number. When two gametes fuse during fertilization, they restore the diploid number.' },
+    { type: 'fb', typeLabel: 'Fill-in', num: 21, q: 'The process called ___ guarantees that the number of chromosomes in gametes is half the number of chromosomes in body cells.', a: 'Meiosis', exp: 'Meiosis cuts the chromosome number in half by doing two divisions (meiosis I and meiosis II) after just one round of DNA replication. This is why gametes are haploid (n) while body cells are diploid (2n).' },
+    { type: 'fb', typeLabel: 'Fill-in', num: 22, q: 'The process in which sperm and egg cells join is called ___.', a: 'Fertilization', exp: 'Fertilization is when a sperm cell fuses with an egg cell, combining their two haploid sets of chromosomes into one diploid cell — the zygote. This zygote then develops into a new organism by mitosis.' },
+    { type: 'fb', typeLabel: 'Fill-in', num: 23, q: 'The entire span in the life of an organism from one generation to the next is called a(n) ___.', a: 'Life cycle', exp: 'A life cycle describes everything that happens from one generation to the next — including growth, development, reproduction, and (eventually) the production of the next generation. Different organisms have different life cycles (diploid-dominant, haploid-dominant, alternation of generations).' },
+    { type: 'fb', typeLabel: 'Fill-in', num: 24, q: 'If a chicken muscle cell has 38 chromosomes, a chicken egg cell has ___ chromosomes.', a: '19', exp: 'Muscle cells are body (somatic) cells, so they are diploid (2n = 38). Egg cells are gametes, so they are haploid (n) — half the number. 38 ÷ 2 = 19. After fertilization, the egg (19) + sperm (19) = 38 chromosomes in the new chick.' },
+    // Essay
+    { type: 'essay', typeLabel: 'Essay', num: 25, q: 'What are at least two advantages of asexual reproduction? (2 points)', a: 'Faster, no partner needed, less energy — explain WHY each is an advantage.', exp: 'Asexual reproduction has several advantages over sexual reproduction:\n\n1. IT IS FASTER. Asexual reproduction does not require finding a mate, courtship, fertilization, or gestation — a single organism can simply divide or bud off a copy of itself. This means populations can grow much more quickly when conditions are favorable.\n\n2. NO PARTNER IS REQUIRED. Because only one parent is needed, organisms can reproduce even when they are isolated or when no mates are available. This is especially useful for organisms that do not move around much (like plants or many simple animals).\n\n3. IT REQUIRES LESS ENERGY. Sexual reproduction takes energy for producing gametes, finding a mate, mating, and often caring for offspring. Asexual reproduction skips all of that, so organisms can put more energy into growth and survival.\n\nThe key thing to remember: always EXPLAIN WHY each advantage matters, not just list the advantage by itself.' },
+    { type: 'essay', typeLabel: 'Essay', num: 26, q: 'Explain what would happen during human reproduction if meiosis did not occur. Give one short-term effect and one long-term effect. (2 points)', a: 'Short term: no gametes. Long term: extinction.', exp: 'If meiosis did not occur in humans, gametes (sperm and egg cells) could not be made. Body cells are diploid (2n = 46 chromosomes), and only meiosis cuts that number in half to make the haploid sex cells needed for sexual reproduction.\n\nSHORT-TERM EFFECT: No new sperm or egg cells would be produced. Without gametes, fertilization could not happen, so no new humans could be conceived.\n\nLONG-TERM EFFECT: With no reproduction possible, the human species would eventually go extinct as the current generation aged and died without producing children.\n\n(Note: another possible problem — if cells tried to combine without meiosis first, the chromosome number would double every generation, which is not survivable.)' },
+    { type: 'essay', typeLabel: 'Essay', num: 27, q: 'Explain why crossing-over could not possibly occur during meiosis II. (2 points)', a: 'Homologous chromosomes are already separated.', exp: 'Crossing-over requires HOMOLOGOUS CHROMOSOMES (the matching pairs — one from mom, one from dad) to be physically next to each other so they can exchange corresponding segments of DNA.\n\nIn meiosis I, the homologous pairs come together during prophase I — this is when crossing-over happens. Then, during anaphase I, the homologous chromosomes are pulled APART into two separate cells.\n\nBy the time meiosis II begins, the homologous chromosomes are already in different cells. Each cell going into meiosis II only has ONE chromosome from each pair (along with its sister chromatid). With no homolog present to pair with, there is nothing to cross over WITH. So crossing-over is impossible in meiosis II.' },
+  ],
+
+  'ch6': [
+    // True/False
+    { type: 'tf', typeLabel: 'True / False', num: 1, q: 'The mating of garden-pea flowers can be easily controlled because the male and female reproductive parts are enclosed within the same flower.', a: 'True', exp: 'Pea flowers normally self-pollinate because both reproductive structures are inside one closed flower. This let Mendel control crosses precisely by manually pollinating them.' },
+    { type: 'tf', typeLabel: 'True / False', num: 2, q: 'When Mendel cross-pollinated two varieties from the P generation that exhibited contrasting traits, he called the offspring the F₂ generation.', a: 'False', exp: 'The first offspring of the P (parental) generation is called the F₁ generation. The F₂ generation comes from crossing F₁ individuals with each other.' },
+    { type: 'tf', typeLabel: 'True / False', num: 3, q: 'Individuals must exhibit a trait in order for it to appear in their offspring.', a: 'False', exp: 'A parent can carry a recessive allele without showing the trait (heterozygous carriers). Two heterozygous parents can produce a homozygous recessive child that does show it.' },
+    { type: 'tf', typeLabel: 'True / False', num: 4, q: 'It is not possible for a gene to have more than two alleles.', a: 'False', exp: 'A single individual carries only two alleles per gene (one from each parent), but a gene can have many alleles in the population. ABO blood type is the classic example — three alleles: Iᴬ, Iᴮ, i.' },
+    { type: 'tf', typeLabel: 'True / False', num: 5, q: 'If all of the offspring of a test cross have the dominant trait, then the genotype of the individual being tested is heterozygous.', a: 'False', exp: 'If all offspring show the dominant trait, the tested parent is most likely homozygous dominant. A heterozygous parent would produce roughly half offspring with the recessive trait.' },
+    // Multiple Choice
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 1, q: 'The passing of traits from parents to offspring is called', options: [['A','genetics'],['B','heredity'],['C','development'],['D','maturation']], a: 'B — Heredity', exp: 'Heredity is the passing of traits from one generation to the next. Genetics is the broader scientific study of heredity.' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 2, q: 'The scientific study of heredity is called', options: [['A','meiosis'],['B','crossing-over'],['C','genetics'],['D','pollination']], a: 'C — Genetics', exp: 'Genetics is the field of science that studies how heredity works — how genes are passed and expressed.' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 3, q: "Step 1 of Mendel's garden pea experiment, allowing each variety of garden pea to self-pollinate for several generations, produced the", options: [['A','F₁ generation'],['B','F₂ generation'],['C','P generation'],['D','P₁ generation']], a: 'C — P generation', exp: 'Self-pollinating for many generations created true-breeding parental lines. Those true-breeding parents are the P (parental) generation, the starting point of the crosses.' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 4, q: 'F₂ : F₁ ::', options: [['A','P : F₁'],['B','F₁ : F₂'],['C','F₁ : P'],['D','dominant trait : recessive trait']], a: 'C — F₁ : P', exp: 'This is an analogy: F₂ comes from F₁, just as F₁ comes from P. Each generation produces the next in sequence.' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 5, q: 'An individual heterozygous for a trait and an individual homozygous recessive for the trait are crossed and produce many offspring that are', options: [['A','all the same genotype'],['B','of two different phenotypes'],['C','of three different phenotypes'],['D','all the same phenotype']], a: 'B — Two different phenotypes', exp: 'A test cross of Tt × tt produces half Tt (dominant phenotype) and half tt (recessive phenotype) — two different phenotypes in a 1:1 ratio.' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 6, q: 'Tallness is dominant to shortness in pea plants. Which of the following represents a genotype of a pea plant that is heterozygous for tallness?', options: [['A','Ts'],['B','TT'],['C','Tt'],['D','tt']], a: 'C — Tt', exp: 'Heterozygous means having two different alleles for a trait. Tt has one dominant (T) and one recessive (t) allele. TT is homozygous dominant; tt is homozygous recessive.' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 7, q: "Mendel's finding that the inheritance of one trait had no effect on the inheritance of another became known as the", options: [['A','law of dominance'],['B','law of universal inheritance'],['C','law of segregation'],['D','law of independent assortment']], a: 'D — Law of independent assortment', exp: "Mendel's law of independent assortment states that alleles for different traits are distributed to gametes independently of one another. This holds when the genes are on different chromosomes." },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 13, q: 'In rabbits, black fur (B) is dominant to brown fur (b). A Bb × Bb cross is shown in the Punnett square below. The device shown, used to determine the probable outcome of genetic crosses, is called a', punnett: { p1: 'B', p2: 'b', q1: 'b', q2: 'b', cells: ['BB','Bb','Bb','bb'] }, options: [['A','Mendelian box'],['B','Punnett square'],['C','genetic graph'],['D','pedigree']], a: 'B — Punnett square', exp: 'A Punnett square is the diagram named after Reginald Punnett that predicts genotype and phenotype ratios from a genetic cross.' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 14, q: 'Referring to the Bb × Bb rabbit cross (black fur B dominant to brown b), both of the parents in the cross are', punnett: { p1: 'B', p2: 'b', q1: 'b', q2: 'b', cells: ['BB','Bb','Bb','bb'] }, options: [['A','black'],['B','brown'],['C','homozygous dominant'],['D','homozygous recessive']], a: 'A — Black', exp: 'Both parents are Bb (heterozygous). Because B (black) is dominant over b (brown), having even one B allele means the rabbit shows the black phenotype.' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 15, q: 'In the Bb × Bb rabbit Punnett square, the phenotype of the offspring indicated by box 3 (genotype Bb) would be', punnett: { p1: 'B', p2: 'b', q1: 'b', q2: 'b', cells: ['BB','Bb','Bb','bb'] }, options: [['A','brown'],['B','black'],['C','a mixture of brown and black'],['D','None of the above']], a: 'B — Black', exp: 'Box 3 has the genotype Bb. Since B (black) is dominant over b (brown), one B allele is enough to make the rabbit black.' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 16, q: 'In the Bb × Bb rabbit Punnett square, the genotypic ratio of the possible offspring would be', punnett: { p1: 'B', p2: 'b', q1: 'b', q2: 'b', cells: ['BB','Bb','Bb','bb'] }, options: [['A','1:1'],['B','3:1'],['C','1:3'],['D','1:2:1']], a: 'D — 1:2:1', exp: 'The four boxes give 1 BB : 2 Bb : 1 bb — a 1:2:1 genotypic ratio. The phenotypic ratio is 3:1 (black to brown), but the genotypic ratio counts each genotype separately.' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 17, q: 'What is the expected genotypic ratio resulting from a homozygous dominant × heterozygous monohybrid cross? (e.g., TT × Tt)', options: [['A','4:0'],['B','2:2'],['C','1:2:1'],['D','1:3:1']], a: 'B — 2:2 (or 1:1)', exp: 'TT × Tt produces 2 TT and 2 Tt offspring — a 2:2 ratio (which simplifies to 1:1). Only two genotypes are possible since no tt can be produced.' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 18, q: 'What is the expected genotypic ratio resulting from a heterozygous × heterozygous monohybrid cross? (e.g., Tt × Tt)', options: [['A','1:2:1'],['B','1:3:1'],['C','1:2'],['D','1:0']], a: 'A — 1:2:1', exp: 'Tt × Tt produces 1 TT : 2 Tt : 1 tt — the classic 1:2:1 genotypic ratio. The phenotypic ratio is 3:1.' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 19, q: 'What is the expected phenotypic ratio resulting from a homozygous dominant × heterozygous monohybrid cross? (e.g., TT × Tt)', options: [['A','1:3:1'],['B','1:2:1'],['C','2:2'],['D','4:0']], a: 'D — 4:0', exp: 'All offspring of TT × Tt inherit at least one T allele, so 100% show the dominant phenotype. The ratio is 4:0 (all dominant, none recessive).' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 20, q: 'What is the probability that the offspring of a homozygous dominant individual and a homozygous recessive individual will exhibit the dominant phenotype?', options: [['A','25%'],['B','50%'],['C','66%'],['D','100%']], a: 'D — 100%', exp: 'TT × tt produces all Tt offspring. Every offspring has one dominant allele, so 100% show the dominant phenotype.' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 21, q: 'Which of the following traits is controlled by multiple alleles in humans?', options: [['A','hair color'],['B','blood type'],['C',"widow's peak"],['D','tongue-rolling']], a: 'B — Blood type', exp: 'The ABO blood type gene has three alleles in the human population: Iᴬ, Iᴮ, and i. Most genes have only two common alleles.' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 22, q: 'What would be the blood type of a person who inherited a B allele from one parent and a recessive (i) allele from the other?', options: [['A','type A'],['B','type B'],['C','type AB'],['D','type BO']], a: 'B — Type B', exp: 'The genotype Iᴮi produces type B blood. The Iᴮ allele is dominant over i, so the recessive allele is masked. There is no "BO" blood type.' },
+    { type: 'mc', typeLabel: 'Multiple Choice', num: 23, q: 'The ABO blood type gene has three alleles. How many possible phenotypes are there?', options: [['A','three'],['B','four'],['C','six'],['D','none of the above']], a: 'B — Four', exp: 'There are four blood type phenotypes: A, B, AB, and O. AB exists because Iᴬ and Iᴮ are codominant — both are expressed when present together.' },
+    // Fill-in
+    { type: 'fb', typeLabel: 'Fill-in', num: 1, q: 'A reproductive process in which fertilization occurs within a single plant is ___.', a: 'Self-pollination', exp: 'Self-pollination happens when pollen from a flower fertilizes the egg of the same flower or another flower on the same plant. Pea plants normally self-pollinate.' },
+    { type: 'fb', typeLabel: 'Fill-in', num: 2, q: 'A(n) ___ cross is a cross that involves one pair of contrasting traits.', a: 'Monohybrid', exp: 'A monohybrid cross studies one trait (e.g., flower color only). A dihybrid cross studies two traits at once.' },
+    { type: 'fb', typeLabel: 'Fill-in', num: 3, q: "In Mendel's experiments, a trait that disappeared in the F₁ generation but reappeared in the F₂ generation was always a(n) ___ trait.", a: 'Recessive', exp: 'Recessive traits are masked when paired with a dominant allele. They reappear in F₂ when two heterozygous F₁ individuals each pass on the recessive allele.' },
+    { type: 'fb', typeLabel: 'Fill-in', num: 4, q: 'Different forms of a particular gene are called ___.', a: 'Alleles', exp: 'Alleles are variants of the same gene. For example, the gene for pea color has a yellow allele and a green allele.' },
+    { type: 'fb', typeLabel: 'Fill-in', num: 5, q: 'An organism that has two identical alleles for a trait is called ___.', a: 'Homozygous', exp: 'Homozygous means "same alleles" — either TT (homozygous dominant) or tt (homozygous recessive). Heterozygous means having two different alleles (Tt).' },
+    { type: 'fb', typeLabel: 'Fill-in', num: 6, q: 'If some of the offspring of a test cross have the recessive trait, then the genotype of the individual being tested is ___.', a: 'Heterozygous', exp: 'In a test cross, the unknown is crossed with a homozygous recessive (tt). If any offspring show the recessive trait, the unknown must have contributed a recessive allele — meaning it is heterozygous (Tt).' },
+    { type: 'fb', typeLabel: 'Fill-in', num: 7, q: 'The position of a gene on a chromosome is called its ___.', a: 'Locus', exp: "Each gene has a specific locus (location) on a particular chromosome. The plural is loci. Think of it as the gene's address." },
+    // Essay
+    { type: 'essay', typeLabel: 'Essay', num: 1, q: 'Describe how genotype and phenotype are related, defining both terms in your answer.', a: 'Genotype determines phenotype.', exp: 'Genotype is the genetic makeup of an organism — the specific combination of alleles it carries for a trait (e.g., TT, Tt, or tt). Phenotype is the observable physical expression of those alleles — what the trait actually looks like (e.g., tall or short).\n\nThe two are related because genotype determines phenotype: the alleles an organism inherits decide which traits are expressed. Dominant alleles mask recessive ones, so TT and Tt produce the same phenotype (tall), while only tt shows the recessive phenotype (short). Environmental factors can also influence phenotype, but the genotype sets the underlying instructions.' },
+    { type: 'essay', typeLabel: 'Essay', num: 2, q: 'Explain codominance and give an example.', a: 'Both alleles are fully expressed.', exp: 'Codominance is a pattern of inheritance in which both alleles in a heterozygous individual are fully and separately expressed in the phenotype — neither one masks the other.\n\nThe classic example is human ABO blood type. A person with the genotype Iᴬ Iᴮ has type AB blood, expressing both the A antigen and the B antigen on their red blood cells. Another example is roan cattle, where a heterozygous animal has both red hairs and white hairs visible at the same time (not blended pink).\n\nNote: codominance is different from incomplete dominance, where the alleles blend (red + white = pink).' },
+    { type: 'essay', typeLabel: 'Essay', num: 3, q: 'All of the offspring resulting from a cross between a red snapdragon and a white snapdragon are pink. What is the possible explanation for this?', a: 'Incomplete dominance.', exp: 'This is incomplete dominance — a pattern of inheritance where neither allele is fully dominant, so the heterozygous phenotype is a blend or intermediate of the two homozygous phenotypes.\n\nThe red parent (RR) and the white parent (WW or R\'R\') each pass one allele to the offspring, giving every F₁ offspring the heterozygous genotype (RW). Because neither red nor white is fully dominant, the resulting phenotype is pink — a blend.\n\nThis differs from codominance: in codominance both colors would appear separately (red and white patches), but in incomplete dominance they blend into a single intermediate color.' },
+    { type: 'essay', typeLabel: 'Essay', num: 4, q: 'A woman with blood type A had a baby with blood type O. She is trying to claim that Post Malone (blood type B) was the father of her child. Could Malone be the father? Why or why not? (4 points)', a: 'Yes — it is possible.', exp: 'Yes, Post Malone could be the father.\n\nBlood type O has the genotype ii (homozygous recessive). For the baby to be type O, BOTH parents must have contributed an i allele.\n\n• The mother is type A. Her genotype could be Iᴬ Iᴬ or Iᴬ i. Since the baby is type O, she must be Iᴬ i — she carries a recessive i allele and passed it to the baby.\n\n• Post Malone is type B. His genotype could be Iᴮ Iᴮ or Iᴮ i. If he is Iᴮ i, he also carries a recessive i allele and could have passed it to the baby.\n\nSo if Post Malone has the genotype Iᴮ i, he and the mother could absolutely produce a type O baby. The blood typing does not rule him out as the father.' },
+    { type: 'essay', typeLabel: 'Essay', num: 5, q: 'What are four specific, numeric ways to express the probability of an event that occurs 250 times out of 1,000 total trials?', a: '1/4, 0.25, 25%, 1:3', exp: 'Probability can be expressed in four equivalent ways:\n\n• Fraction: 250/1000 simplifies to 1/4\n• Decimal: 0.25\n• Percentage: 25%\n• Ratio: 1:3 (1 occurrence for every 3 non-occurrences — note that 250 out of 1000 means 250 successes and 750 failures)\n\nAll four describe the same probability — just in different formats.' },
+  ],
+};
+
 // ============ STATE ============
-let cards = [...allCards];
+let activeChapter = null;
+let cards = [];
 let currentIndex = 0;
 let known = new Set();
 let toReview = new Set();
 let currentFilter = 'all';
 
-// ============ RENDER ============
+// ============ LANDING PAGE ============
+function renderLanding() {
+  const grid = document.getElementById('chapter-grid');
+  grid.innerHTML = chapters.map(ch => {
+    const deck = decks[ch.id];
+    const count = deck ? deck.length : 0;
+    return `
+      <button class="chapter-card" onclick="openChapter('${ch.id}')">
+        <div class="chapter-card-info">
+          <div class="chapter-label">${ch.label}</div>
+          <div class="chapter-name">${ch.italicName === false ? ch.name : `<em>${ch.name}</em>`}</div>
+          <div class="chapter-count">${count} flashcards</div>
+        </div>
+        <svg class="chapter-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    `;
+  }).join('');
+}
+
+function openChapter(id) {
+  activeChapter = id;
+  const ch = chapters.find(c => c.id === id);
+  document.getElementById('deck-title').innerHTML = ch.titleHTML;
+  document.getElementById('landing').classList.remove('active');
+  document.getElementById('deck-view').classList.add('active');
+
+  // Reset per-deck state
+  known = new Set();
+  toReview = new Set();
+  currentIndex = 0;
+  currentFilter = 'all';
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  document.querySelector('.chip[data-filter="all"]').classList.add('active');
+
+  cards = [...decks[id]];
+  renderCard();
+  window.scrollTo(0, 0);
+}
+
+function goHome() {
+  document.getElementById('deck-view').classList.remove('active');
+  document.getElementById('landing').classList.add('active');
+  document.getElementById('completion').classList.remove('active');
+  document.getElementById('card-area').style.display = 'block';
+  window.scrollTo(0, 0);
+}
+
+// ============ RENDER CARD ============
 function renderCard() {
   if (currentIndex >= cards.length) {
     showCompletion();
@@ -698,12 +911,11 @@ function renderCard() {
   document.getElementById('card-num-back').textContent = `Q${c.num}`;
   document.getElementById('card-question').textContent = c.q;
 
-  // Options + optional Punnett square
   const optsDiv = document.getElementById('card-options');
   let html = '';
-  if (c.punnett) {
-    html += renderPunnett(c.punnett);
-  }
+  if (c.showDiagram === 'mitosis') html += renderMitosisDiagram();
+  if (c.showDiagram === 'meiosis') html += renderMeiosisDiagram();
+  if (c.punnett) html += renderPunnett(c.punnett);
   if (c.options) {
     c.options.forEach(([letter, text]) => {
       html += `<span class="opt"><span class="letter">${letter}.</span> ${text}</span>`;
@@ -723,6 +935,29 @@ function renderCard() {
   document.getElementById('prev-btn').disabled = currentIndex === 0;
 
   updateCounts();
+}
+
+function renderMitosisDiagram() {
+  return `
+    <div class="mitosis-diagram">
+      <div class="stage-box"><span class="stage-letter">A</span><span class="stage-label">Chromosomes loose in nucleus</span></div>
+      <div class="stage-box"><span class="stage-letter">B</span><span class="stage-label">Attached to spindle, at poles</span></div>
+      <div class="stage-box"><span class="stage-letter">C</span><span class="stage-label">Lined up at equator</span></div>
+      <div class="stage-box"><span class="stage-letter">D</span><span class="stage-label">Two cells separating</span></div>
+    </div>
+  `;
+}
+
+function renderMeiosisDiagram() {
+  return `
+    <div class="diagram-grid">
+      <div class="diagram-box"><span class="diagram-letter">A</span><span class="diagram-label">2 single chromosomes (haploid)</span></div>
+      <div class="diagram-box"><span class="diagram-letter">B</span><span class="diagram-label">2 duplicated chromosomes</span></div>
+      <div class="diagram-box"><span class="diagram-letter">C</span><span class="diagram-label">Cell splitting in two</span></div>
+      <div class="diagram-box"><span class="diagram-letter">D</span><span class="diagram-label">4 duplicated in one cell</span></div>
+      <div class="diagram-box"><span class="diagram-letter">E</span><span class="diagram-label">Two cells, 2 duplicated each</span></div>
+    </div>
+  `;
 }
 
 function renderPunnett(p) {
@@ -791,7 +1026,7 @@ function shuffleCards() {
 }
 
 function resetProgress() {
-  if (!confirm('Reset all progress for this filter?')) return;
+  if (!confirm('Reset all progress for this chapter?')) return;
   known.clear();
   toReview.clear();
   currentIndex = 0;
@@ -800,10 +1035,11 @@ function resetProgress() {
 
 function applyFilter(filter) {
   currentFilter = filter;
+  const fullDeck = decks[activeChapter];
   if (filter === 'all') {
-    cards = [...allCards];
+    cards = [...fullDeck];
   } else {
-    cards = allCards.filter(c => c.type === filter);
+    cards = fullDeck.filter(c => c.type === filter);
   }
   currentIndex = 0;
   renderCard();
@@ -819,11 +1055,11 @@ function showCompletion() {
 
 function restartDeck() {
   currentIndex = 0;
-  renderCard();
+  applyFilter(currentFilter);
 }
 
 function reviewOnly() {
-  cards = allCards.filter(c => toReview.has(`${c.type}-${c.num}`));
+  cards = decks[activeChapter].filter(c => toReview.has(`${c.type}-${c.num}`));
   currentIndex = 0;
   renderCard();
 }
@@ -839,13 +1075,15 @@ document.querySelectorAll('.chip').forEach(chip => {
 
 // ============ KEYBOARD ============
 document.addEventListener('keydown', (e) => {
+  if (!document.getElementById('deck-view').classList.contains('active')) return;
   if (e.key === 'ArrowRight') nextCard();
   if (e.key === 'ArrowLeft') prevCard();
   if (e.key === ' ') { e.preventDefault(); flipCard(); }
+  if (e.key === 'Escape') goHome();
 });
 
 // ============ INIT ============
-renderCard();
+renderLanding();
 </script>
 </body>
 </html>
