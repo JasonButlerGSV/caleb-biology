@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caleb's Biology Quiz</title>
+<style>
+  :root {
+    --font-serif: ui-serif, Georgia, 'Iowan Old Style', 'Apple Garamond', 'Baskerville', 'Times New Roman', serif;
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    --bg: #fafaf7;
+    --ink: #1a1a1a;
+    --ink-soft: #555;
+    --ink-faint: #999;
+    --line: #e5e5df;
+    --line-strong: #2a2a2a;
+    --accent: #8a4a2e;
+    --accent-soft: #f0e7df;
+    --correct: #4a6b3e;
+    --correct-bg: #edf2e7;
+    --wrong: #a8623a;
+    --wrong-bg: #f3e3d8;
+    --card-bg: #ffffff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.5;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  /* Top nav */
+  .top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--ink-soft);
+    transition: color 0.15s ease;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px 0;
+  }
+  .back-link:hover { color: var(--ink); }
+
+  /* Header */
+  .header {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 24px;
+    margin-bottom: 32px;
+  }
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 8px;
+  }
+  .title {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: 38px;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+  .title em { font-style: italic; color: var(--accent); }
+  .subtitle {
+    color: var(--ink-soft);
+    margin-top: 8px;
+    font-size: 15px;
+  }
+
+  /* Start screen */
+  .start-screen { display: block; }
+  .start-screen.hidden { display: none; }
+
+  .start-info {
+    background: var(--card-bg);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 32px 28px;
+    margin-bottom: 24px;
+  }
+  .start-info h2 {
+    font-family: var(--font-serif);
+    font-size: 22px;
+    font-weight: 400;
+    margin-bottom: 16px;
+  }
+  .start-info p {
+    color: var(--ink-soft);
+    margin-bottom: 16px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .start-info ul { list-style: none; margin-top: 8px; }
+  .start-info li {
+    color: var(--ink-soft);
+    font-size: 14px;
+    padding: 4px 0;
+    display: flex;
+    gap: 10px;
+  }
+  .start-info li::before {
+    content: '·';
+    color: var(--accent);
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .start-btn-row {
+    text-align: center;
+    margin-top: 8px;
+  }
+  .start-btn {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    padding: 14px 40px;
+    border: 1px solid var(--line-strong);
+    background: var(--line-strong);
+    color: var(--bg);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .start-btn:hover { background: var(--ink); }
+
+  /* Quiz view */
+  .quiz-view { display: none; }
+  .quiz-view.active { display: block; }
+
+  /* Progress */
+  .progress-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+  .progress-stats { display: flex; gap: 18px; }
+  .stat-correct { color: var(--correct); }
+  .stat-wrong { color: var(--wrong); }
+  .progress-track {
+    height: 2px;
+    background: var(--line);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 32px;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--line-strong);
+    transition: width 0.3s ease;
+  }
+
+  /* Question card */
+  .question-card {
+    background: var(--card-bg);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 40px 36px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02), 0 8px 24px rgba(0,0,0,0.04);
+  }
+  .question-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 20px;
+  }
+  .question-meta .type-badge { color: var(--accent); }
+  .question-text {
+    font-family: var(--font-serif);
+    font-size: 22px;
+    line-height: 1.4;
+    font-weight: 400;
+    color: var(--ink);
+    margin-bottom: 24px;
+  }
+
+  /* Answer choices */
+  .choices {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .choice {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 20px;
+    border: 1px solid var(--line);
+    background: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.45;
+    text-align: left;
+    color: var(--ink);
+    transition: all 0.15s ease;
+    width: 100%;
+  }
+  .choice:hover:not(:disabled) {
+    border-color: var(--line-strong);
+    background: #faf9f5;
+  }
+  .choice:disabled { cursor: default; }
+  .choice .letter {
+    font-weight: 600;
+    color: var(--ink-soft);
+    flex-shrink: 0;
+    width: 18px;
+  }
+  .choice .text { flex: 1; }
+  .choice.correct {
+    border-color: var(--correct);
+    background: var(--correct-bg);
+    color: var(--ink);
+  }
+  .choice.correct .letter { color: var(--correct); }
+  .choice.wrong {
+    border-color: var(--wrong);
+    background: var(--wrong-bg);
+    color: var(--ink);
+  }
+  .choice.wrong .letter { color: var(--wrong); }
+  .choice.dimmed {
+    opacity: 0.45;
+  }
+
+  /* Feedback */
+  .feedback {
+    margin-top: 20px;
+    padding: 18px 20px;
+    border-radius: 4px;
+    border: 1px solid var(--line);
+    background: #fbfaf5;
+    display: none;
+  }
+  .feedback.show { display: block; }
+  .feedback.correct-fb {
+    border-color: var(--correct);
+    background: var(--correct-bg);
+  }
+  .feedback.wrong-fb {
+    border-color: var(--wrong);
+    background: var(--wrong-bg);
+  }
+  .feedback-label {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .feedback.correct-fb .feedback-label { color: var(--correct); }
+  .feedback.wrong-fb .feedback-label { color: var(--wrong); }
+  .feedback-text {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+  }
+  .feedback-text strong { color: var(--ink); }
+
+  /* Action row */
+  .action-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 16px;
+  }
+  .next-btn {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    padding: 12px 28px;
+    border: 1px solid var(--line-strong);
+    background: var(--line-strong);
+    color: var(--bg);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .next-btn:hover { background: var(--ink); }
+
+  /* Results screen */
+  .results { display: none; text-align: center; padding: 40px 0; }
+  .results.active { display: block; }
+  .results h2 {
+    font-family: var(--font-serif);
+    font-size: 36px;
+    font-weight: 400;
+    margin-bottom: 8px;
+  }
+  .results .score-percent {
+    font-family: var(--font-serif);
+    font-size: 64px;
+    font-weight: 400;
+    color: var(--accent);
+    margin: 24px 0 8px;
+    line-height: 1;
+  }
+  .results .score-fraction {
+    font-size: 14px;
+    color: var(--ink-soft);
+    letter-spacing: 0.05em;
+    margin-bottom: 32px;
+  }
+  .results-summary {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin: 24px 0 40px;
+  }
+  .results-stat {
+    text-align: center;
+  }
+  .results-stat .num {
+    font-family: var(--font-serif);
+    font-size: 36px;
+    font-weight: 400;
+    display: block;
+  }
+  .results-stat .lbl {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-top: 4px;
+  }
+  .results-stat.correct-stat .num { color: var(--correct); }
+  .results-stat.wrong-stat .num { color: var(--wrong); }
+
+  .results-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 280px;
+    margin: 0 auto;
+  }
+  .results-btn {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    padding: 13px 24px;
+    border: 1px solid var(--line);
+    background: white;
+    color: var(--ink);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .results-btn:hover { border-color: var(--line-strong); }
+  .results-btn.primary {
+    background: var(--line-strong);
+    color: var(--bg);
+    border-color: var(--line-strong);
+  }
+  .results-btn.primary:hover { background: var(--ink); }
+  .results-btn.retry-wrong {
+    border-color: var(--wrong);
+    color: var(--wrong);
+  }
+  .results-btn.retry-wrong:hover {
+    background: var(--wrong);
+    color: white;
+  }
+  .results-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  /* Review section */
+  .review-section {
+    margin-top: 48px;
+    text-align: left;
+    border-top: 1px solid var(--line);
+    padding-top: 32px;
+    display: none;
+  }
+  .review-section.show { display: block; }
+  .review-heading {
+    font-family: var(--font-serif);
+    font-size: 22px;
+    font-weight: 400;
+    margin-bottom: 20px;
+    text-align: left;
+  }
+  .review-item {
+    background: var(--card-bg);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--wrong);
+    border-radius: 4px;
+    padding: 20px 22px;
+    margin-bottom: 14px;
+  }
+  .review-item .rq {
+    font-family: var(--font-serif);
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: var(--ink);
+  }
+  .review-item .ra {
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+  .review-item .ra strong { color: var(--ink); }
+  .review-item .picked { color: var(--wrong); }
+  .review-item .right { color: var(--correct); }
+
+  /* Punnett square (for chapter 6 questions) */
+  .punnett {
+    display: inline-grid;
+    grid-template-columns: 28px repeat(2, 56px);
+    grid-template-rows: 28px repeat(2, 56px);
+    gap: 0;
+    margin: 0 0 20px 0;
+    font-family: var(--font-serif);
+    font-size: 16px;
+  }
+  .punnett > div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--line-strong);
+    background: white;
+  }
+  .punnett .label {
+    border: none;
+    font-weight: 500;
+    color: var(--ink-soft);
+  }
+  .punnett .corner { border: none; }
+
+  /* Mitosis stage diagram */
+  .mitosis-diagram {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .stage-box {
+    border: 1px solid var(--line-strong);
+    border-radius: 4px;
+    padding: 12px 8px;
+    text-align: center;
+    background: white;
+  }
+  .stage-letter {
+    font-family: var(--font-serif);
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 4px;
+  }
+  .stage-label {
+    font-size: 12px;
+    color: var(--ink-soft);
+    line-height: 1.3;
+  }
+
+  /* Meiosis 5-diagram grid */
+  .diagram-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .diagram-box {
+    border: 1px solid var(--line-strong);
+    border-radius: 4px;
+    padding: 10px 6px;
+    text-align: center;
+    background: white;
+  }
+  .diagram-letter {
+    font-family: var(--font-serif);
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 4px;
+  }
+  .diagram-label {
+    font-size: 11px;
+    color: var(--ink-soft);
+    line-height: 1.3;
+  }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    .container { padding: 24px 16px 60px; }
+    .title { font-size: 28px; }
+    .question-card { padding: 28px 22px; }
+    .question-text { font-size: 18px; }
+    .choice { padding: 14px 16px; font-size: 14px; }
+    .mitosis-diagram { grid-template-columns: repeat(2, 1fr); }
+    .diagram-grid { grid-template-columns: repeat(2, 1fr); }
+    .results .score-percent { font-size: 52px; }
+    .results-summary { gap: 24px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Top nav -->
+  <div class="top-bar">
+    <a class="back-link" href="index.html">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      Back to flashcards
+    </a>
+  </div>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="eyebrow">Honors Biology I</div>
+    <h1 class="title">Full <em>Quiz</em></h1>
+    <p class="subtitle">All chapters, all question types. Pick the right answer to see why.</p>
+  </header>
+
+  <!-- Start screen -->
+  <div id="start-screen" class="start-screen">
+    <div class="start-info">
+      <h2>How it works</h2>
+      <ul>
+        <li>Questions from every chapter, shuffled together</li>
+        <li>Answer choices are shuffled too — no memorizing positions</li>
+        <li>Click an answer to see if it's right and read a brief explanation</li>
+        <li>Score and progress shown at the top</li>
+        <li>At the end, you can retry only the ones you missed</li>
+      </ul>
+    </div>
+    <div class="start-btn-row">
+      <button class="start-btn" onclick="startQuiz()">Start quiz</button>
+    </div>
+  </div>
+
+  <!-- Quiz view -->
+  <div id="quiz-view" class="quiz-view">
+    <div class="progress-bar">
+      <div><span id="current">1</span> / <span id="total">0</span></div>
+      <div class="progress-stats">
+        <span class="stat-correct">Correct · <span id="correct-count">0</span></span>
+        <span class="stat-wrong">Wrong · <span id="wrong-count">0</span></span>
+      </div>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+
+    <div class="question-card">
+      <div class="question-meta">
+        <span class="type-badge" id="q-type">Type</span>
+        <span id="q-chapter">Chapter</span>
+      </div>
+      <div id="q-extras"></div>
+      <div class="question-text" id="q-text"></div>
+      <div class="choices" id="q-choices"></div>
+      <div class="feedback" id="feedback">
+        <div class="feedback-label" id="feedback-label">Correct</div>
+        <div class="feedback-text" id="feedback-text"></div>
+      </div>
+    </div>
+
+    <div class="action-row">
+      <button class="next-btn" id="next-btn" onclick="nextQuestion()" style="display:none;">Next question →</button>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div id="results" class="results">
+    <div class="eyebrow">Quiz complete</div>
+    <h2>Results</h2>
+    <div class="score-percent" id="score-percent">0%</div>
+    <div class="score-fraction"><span id="score-fraction">0 / 0</span> correct</div>
+    <div class="results-summary">
+      <div class="results-stat correct-stat">
+        <span class="num" id="final-correct">0</span>
+        <span class="lbl">Correct</span>
+      </div>
+      <div class="results-stat wrong-stat">
+        <span class="num" id="final-wrong">0</span>
+        <span class="lbl">Wrong</span>
+      </div>
+    </div>
+    <div class="results-buttons">
+      <button class="results-btn retry-wrong" id="retry-wrong-btn" onclick="retryWrong()">Retry wrong only</button>
+      <button class="results-btn primary" onclick="restartQuiz()">Take quiz again</button>
+      <button class="results-btn" onclick="toggleReview()" id="review-toggle">Show review</button>
+      <a class="results-btn" href="index.html" style="text-decoration:none; text-align:center;">Back to flashcards</a>
+    </div>
+
+    <div class="review-section" id="review-section">
+      <div class="review-heading">Review — questions you missed</div>
+      <div id="review-list"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ============ ALL QUIZ QUESTIONS ============
+// Question types: 'mc' (multiple choice), 'tf' (true/false), 'fb' (fill-in), 'match' (matching)
+// Each question has: type, chapter, q, choices [[letter, text]], correctLetter, exp, optional extras (punnett, mitosis, meiosis)
+
+const allQuestions = [
+  // ============ Ch 5.1/5.2 — Mitosis ============
+  // T/F
+  { type: 'tf', chapter: 'Ch 5.1/5.2 — Mitosis', q: 'Cell division in bacteria and eukaryotes takes place in precisely the same manner.', correct: 'False', exp: 'Bacteria divide by binary fission (simple, no spindle). Eukaryotes use mitosis with chromosome condensation, spindle fibers, and multiple phases.' },
+  { type: 'tf', chapter: 'Ch 5.1/5.2 — Mitosis', q: 'A karyotype is a type of gene.', correct: 'False', exp: 'A karyotype is a picture of all chromosomes in a cell, organized by size and shape. Used to detect chromosomal abnormalities like Down syndrome.' },
+  { type: 'tf', chapter: 'Ch 5.1/5.2 — Mitosis', q: 'Cells spend most of their lifetime in interphase.', correct: 'True', exp: 'Interphase (G₁ + S + G₂) takes about 90% of the cell cycle. Mitosis itself is a much shorter phase.' },
+  { type: 'tf', chapter: 'Ch 5.1/5.2 — Mitosis', q: 'The cell cycle has checkpoints that act to inhibit uncontrolled cell division.', correct: 'True', exp: 'Checkpoints at G₁, G₂, and M verify DNA is intact and conditions are right before allowing the cell to continue. Failures lead to cancer.' },
+  { type: 'tf', chapter: 'Ch 5.1/5.2 — Mitosis', q: 'Cancer is a disease characterized by uncontrolled cell division.', correct: 'True', exp: 'Cancer cells ignore checkpoint signals and divide uncontrollably. They often have mutations in cell cycle regulators like p53.' },
+  { type: 'tf', chapter: 'Ch 5.1/5.2 — Mitosis', q: 'Spindle fibers move chromosomes during cell division.', correct: 'True', exp: 'Spindle fibers are microtubules that attach to centromeres and pull sister chromatids to opposite poles during anaphase.' },
+  // MC
+  { type: 'mc', chapter: 'Ch 5.1/5.2 — Mitosis', q: 'Binary fission', choices: [['A','occurs when two cells collide with each other'],['B','produces excess energy'],['C','creates new species'],['D','is the process by which bacteria divide']], correct: 'D', exp: 'Binary fission is how prokaryotes (bacteria) reproduce asexually — the chromosome copies, the cell elongates, then splits into two identical daughters.' },
+  { type: 'mc', chapter: 'Ch 5.1/5.2 — Mitosis', q: 'The point at which two chromatids are attached to each other in a chromosome is called a(n)', choices: [['A','chloroplast'],['B','centromere'],['C','gamete'],['D','centriole']], correct: 'B', exp: 'The centromere is the constricted region where sister chromatids are joined. Spindle fibers attach here.' },
+  { type: 'mc', chapter: 'Ch 5.1/5.2 — Mitosis', q: 'Chromatids are', choices: [['A','dense patches within the nucleus'],['B','bacterial chromosomes'],['C','joined strands of duplicated genetic material'],['D','prokaryotic nuclei']], correct: 'C', exp: 'After DNA replication, each chromosome consists of two identical sister chromatids joined at the centromere.' },
+  { type: 'mc', chapter: 'Ch 5.1/5.2 — Mitosis', q: 'The chromosomes in your body', choices: [['A','exist in 23 pairs'],['B','each contain thousands of genes'],['C','form right before cells divide'],['D','All of the above']], correct: 'D', exp: 'Human body cells have 23 pairs (46 total), each chromosome holds thousands of genes, and chromosomes condense visibly right before division.' },
+  { type: 'mc', chapter: 'Ch 5.1/5.2 — Mitosis', q: 'Homologous chromosomes are pairs of chromosomes containing genes that code for', choices: [['A','different traits'],['B','the same traits'],['C','DNA'],['D','cytosol']], correct: 'B', exp: 'Homologous chromosomes carry genes for the same traits at the same loci — but the alleles may be different.' },
+  { type: 'mc', chapter: 'Ch 5.1/5.2 — Mitosis', q: 'The X and Y chromosomes are called the', choices: [['A','extra chromosomes'],['B','phenotypes'],['C','sex chromosomes'],['D','All of the above']], correct: 'C', exp: 'X and Y are the sex chromosomes (XX = female, XY = male). The other 22 pairs are called autosomes.' },
+  { type: 'mc', chapter: 'Ch 5.1/5.2 — Mitosis', q: 'female : XX ::', choices: [['A','female : gametes'],['B','female : eggs'],['C','male : YY'],['D','male : XY']], correct: 'D', exp: 'Just as XX is the chromosome pair for females, XY is for males. Males are never YY.' },
+  { type: 'mc', chapter: 'Ch 5.1/5.2 — Mitosis', q: "The individual stage of the cell cycle that occupies most of the cell's life is", choices: [['A','G₁'],['B','M'],['C','G₂'],['D','S']], correct: 'A', exp: 'G₁ (Gap 1) is the longest single phase. The cell grows, does normal functions, and prepares for DNA replication.' },
+  { type: 'mc', chapter: 'Ch 5.1/5.2 — Mitosis', q: 'Which of the following shows the correct sequence of the cell cycle?', choices: [['A','C → M → G₁ → S → G₂'],['B','S → G₁ → G₂ → M → C'],['C','G₁ → S → G₂ → M → C'],['D','None of the above']], correct: 'C', exp: 'G₁ (growth) → S (DNA synthesis) → G₂ (preparation) → M (mitosis) → C (cytokinesis). The first three are interphase.' },
+  { type: 'mc', chapter: 'Ch 5.1/5.2 — Mitosis', q: 'The synthesis (S) phase is characterized by', choices: [['A','DNA replication'],['B','cell division'],['C','replication of mitochondria and other organelles'],['D','the division of cytoplasm']], correct: 'A', exp: 'During S phase ("synthesis"), the cell copies its entire DNA so each daughter gets a complete set.' },
+  { type: 'mc', chapter: 'Ch 5.1/5.2 — Mitosis', q: 'The first three phases of the cell cycle are collectively known as', choices: [['A','cellular respiration'],['B','telophase'],['C','mitosis'],['D','interphase']], correct: 'D', exp: 'Interphase = G₁ + S + G₂. The long preparation period between divisions.' },
+  { type: 'mc', chapter: 'Ch 5.1/5.2 — Mitosis', q: 'cell growth : G₁ ::', choices: [['A','mitosis : C'],['B','mitosis : meiosis'],['C','mitochondria replication : S'],['D','DNA copying : S']], correct: 'D', exp: 'G₁ is when cell growth happens, just as S is when DNA copying happens.' },
+  { type: 'mc', chapter: 'Ch 5.1/5.2 — Mitosis', q: 'metaphase : prophase ::', choices: [['A','G₁ : M'],['B','G₂ : S'],['C','M : C'],['D','autotroph : producer']], correct: 'B', exp: 'Metaphase follows prophase, just as G₂ follows S. Each pair is a phase and the one before it.' },
+  { type: 'mc', chapter: 'Ch 5.1/5.2 — Mitosis', q: 'The phase of mitosis characterized by chromosomes lined up along the equator of the cell is', choices: [['A','telophase'],['B','metaphase'],['C','anaphase'],['D','prophase']], correct: 'B', exp: 'Metaphase = Middle. The word "meta" means middle.' },
+  { type: 'mc', chapter: 'Ch 5.1/5.2 — Mitosis', q: 'As a result of mitosis, each of the two new cells produced from the parent cell during cytokinesis', choices: [['A','receives a few chromosomes from the parent cell'],['B','receives an exact copy of all the chromosomes present in the parent cell'],['C','donates a chromosome to the parent cell'],['D','receives exactly half the chromosomes from the parent cell']], correct: 'B', exp: 'Mitosis produces two genetically identical daughter cells, each with the full chromosome set (46 in humans).' },
+  { type: 'mc', chapter: 'Ch 5.1/5.2 — Mitosis', q: 'Mitosis is a process by which', choices: [['A','DNA is replicated'],['B','cytokinesis occurs'],['C','cells grow in size'],["D","a cell's nucleus divides"]], correct: 'D', exp: 'Mitosis = nuclear division. The cytoplasm divides later in cytokinesis. DNA was replicated earlier, in S phase.' },
+  { type: 'mc', chapter: 'Ch 5.1/5.2 — Mitosis', q: 'In which stage do the centromeres divide? (See diagram above)', extras: 'mitosis', choices: [['A','A (anaphase)'],['B','B'],['C','C'],['D','D']], correct: 'A', exp: 'Centromeres divide during anaphase, releasing sister chromatids toward opposite poles. "A" for Anaphase and Apart.' },
+  { type: 'mc', chapter: 'Ch 5.1/5.2 — Mitosis', q: 'Cytokinesis in plant cells involves the formation of', choices: [['A','replicated chromosomes'],['B','a cell plate'],['C','spindle fibers'],['D','centrioles']], correct: 'B', exp: 'Plant cells have rigid cell walls, so they form a cell plate in the middle that grows outward into a new cell wall.' },
+  // Fill-in (converted to MC)
+  { type: 'fb', chapter: 'Ch 5.1/5.2 — Mitosis', q: 'In bacteria, cell division takes place in three stages. First the ___ is copied, then segregation, then the cell splits.', choices: [['A','DNA'],['B','ribosome'],['C','membrane'],['D','cytoplasm']], correct: 'A', exp: 'In binary fission, the bacterial DNA (a single circular chromosome) is copied first, then segregated, then the cell splits.' },
+  { type: 'fb', chapter: 'Ch 5.1/5.2 — Mitosis', q: 'A(n) ___ is a segment of a DNA molecule that carries the instructions for producing a specific trait.', choices: [['A','allele'],['B','gene'],['C','chromosome'],['D','codon']], correct: 'B', exp: 'A gene is a section of DNA that codes for a specific protein or trait. Genes are the basic units of heredity.' },
+  { type: 'fb', chapter: 'Ch 5.1/5.2 — Mitosis', q: '"Cables" made of microtubules that extend from the poles to the centromeres during cell division are called ___.', choices: [['A','centrioles'],['B','chromatids'],['C','spindle fibers'],['D','cell plates']], correct: 'C', exp: 'Spindle fibers are microtubules extending from centrioles (at the poles) to centromeres of chromosomes. During anaphase they shorten to pull chromatids apart.' },
+  { type: 'fb', chapter: 'Ch 5.1/5.2 — Mitosis', q: 'In mitosis, metaphase follows ___.', choices: [['A','telophase'],['B','prophase'],['C','anaphase'],['D','interphase']], correct: 'B', exp: 'The order of mitosis is Prophase → Metaphase → Anaphase → Telophase (PMAT).' },
+  { type: 'fb', chapter: 'Ch 5.1/5.2 — Mitosis', q: 'Chromosomes coil up and become visible during ___.', choices: [['A','prophase'],['B','metaphase'],['C','anaphase'],['D','telophase']], correct: 'A', exp: 'During prophase, the long thread-like chromatin coils tightly into compact, visible chromosomes.' },
+  { type: 'fb', chapter: 'Ch 5.1/5.2 — Mitosis', q: 'In eukaryotic cells, ___ takes place after the nucleus divides.', choices: [['A','mitosis'],['B','cytokinesis'],['C','replication'],['D','interphase']], correct: 'B', exp: 'Cytokinesis is the division of the cytoplasm, splitting one cell into two. It happens after mitosis (nuclear division).' },
+
+  // ============ Ch 5 — Meiosis ============
+  // T/F
+  { type: 'tf', chapter: 'Ch 5 — Meiosis', q: 'Independent assortment occurs when each pair of chromosomes segregates independently.', correct: 'True', exp: 'During meiosis I, each pair of homologous chromosomes lines up and separates independently, randomizing chromosome combinations in gametes.' },
+  { type: 'tf', chapter: 'Ch 5 — Meiosis', q: 'Gametogenesis occurs only in males.', correct: 'False', exp: 'Gametogenesis happens in both sexes. In males it is spermatogenesis (sperm); in females it is oogenesis (eggs).' },
+  { type: 'tf', chapter: 'Ch 5 — Meiosis', q: 'In sexual reproduction, two parents each form haploid cells, which join to form offspring.', correct: 'True', exp: 'Each parent produces haploid gametes (n). Fertilization joins them, restoring the diploid (2n) chromosome number.' },
+  { type: 'tf', chapter: 'Ch 5 — Meiosis', q: 'Some eukaryotes reproduce asexually, and some reproduce sexually.', correct: 'True', exp: 'Many eukaryotes can reproduce both ways. Most complex animals reproduce sexually; some organisms like bdelloid rotifers only reproduce asexually.' },
+  { type: 'tf', chapter: 'Ch 5 — Meiosis', q: 'In most animals, including humans, meiosis produces sperm and egg cells.', correct: 'True', exp: 'In humans, meiosis happens in testes and ovaries to make haploid gametes. All other body cells are made by mitosis.' },
+  { type: 'tf', chapter: 'Ch 5 — Meiosis', q: 'During the diploid life cycle, all of the cells are diploid.', correct: 'False', exp: 'Even in a diploid-dominant life cycle (like humans), the gametes are haploid. Body cells are diploid, but sperm and eggs are not.' },
+  { type: 'tf', chapter: 'Ch 5 — Meiosis', q: 'Meiosis begins with one haploid cell and ends with four diploid cells.', correct: 'False', exp: 'Opposite! Meiosis starts with one DIPLOID cell and ends with four HAPLOID cells. It cuts the chromosome number in half.' },
+  // MC
+  { type: 'mc', chapter: 'Ch 5 — Meiosis', q: 'Separation of homologous chromosomes occurs during', choices: [['A','mitosis'],['B','meiosis I'],['C','meiosis II'],['D','fertilization']], correct: 'B', exp: 'Homologous chromosomes (the matching pairs) separate during anaphase I of meiosis I. This reduces the chromosome number from diploid to haploid.' },
+  { type: 'mc', chapter: 'Ch 5 — Meiosis', q: 'The difference between anaphase of mitosis and anaphase I of meiosis is that', choices: [['A','the chromosomes line up at the equator in anaphase I'],['B','centromeres do not exist in anaphase I'],['C','chromatids do not separate at the centromere in anaphase I'],['D','crossing-over occurs only in anaphase of mitosis']], correct: 'C', exp: 'In anaphase of mitosis, sister chromatids separate. In anaphase I of meiosis, homologous chromosomes separate but sister chromatids stay attached at the centromere.' },
+  { type: 'mc', chapter: 'Ch 5 — Meiosis', q: 'When crossing-over takes place, chromosomes', choices: [['A','mutate in the first division'],['B','produce new genes'],['C','decrease in number'],['D','exchange corresponding segments of DNA']], correct: 'D', exp: 'During prophase I, homologous chromosomes pair up and exchange matching segments of DNA. A major source of genetic variation.' },
+  { type: 'mc', chapter: 'Ch 5 — Meiosis', q: 'Using a cell with a diploid number of 4 chromosomes, which diagram depicts a cell at the end of meiosis I?', extras: 'meiosis', choices: [['A','B'],['B','C'],['C','D'],['D','E']], correct: 'D', exp: 'At the end of meiosis I, two cells exist, each haploid but with chromosomes still duplicated. Diagram E shows two cells each with 2 duplicated chromosomes.' },
+  { type: 'mc', chapter: 'Ch 5 — Meiosis', q: 'Which diagram depicts a cell at the end of meiosis II?', extras: 'meiosis', choices: [['A','A'],['B','B'],['C','C'],['D','D']], correct: 'A', exp: 'After meiosis II, sister chromatids separate. Each final cell has single (unduplicated) chromosomes — diagram A shows the haploid result with 2 single chromosomes.' },
+  { type: 'mc', chapter: 'Ch 5 — Meiosis', q: 'Which diagram depicts a cell at the end of mitosis, but before the new cell cycle begins?', extras: 'meiosis', choices: [['A','A'],['B','B'],['C','C'],['D','None of the above']], correct: 'B', exp: 'After mitosis, the daughter cell has the same diploid chromosome number (2n=4) as the parent. Diagram B shows the diploid number of duplicated chromosomes.' },
+  { type: 'mc', chapter: 'Ch 5 — Meiosis', q: 'Crossing-over occurs', choices: [['A','during prophase 2'],['B','during fertilization'],['C','during prophase I'],['D','at the centromere']], correct: 'C', exp: 'Crossing-over happens in prophase I, when homologous chromosomes pair up. By meiosis II, homologs are no longer together.' },
+  { type: 'mc', chapter: 'Ch 5 — Meiosis', q: 'Which of the following does NOT provide new genetic combinations?', choices: [['A','random fertilization'],['B','cytokinesis'],['C','independent assortment'],['D','crossing-over']], correct: 'B', exp: 'Cytokinesis is just splitting the cytoplasm — it does not shuffle genes. The other three are all sources of genetic variation.' },
+  { type: 'mc', chapter: 'Ch 5 — Meiosis', q: 'Under favorable conditions, an organism reproduces asexually. When conditions become stressful, it switches to sexual reproduction. Why?', choices: [['A','Sexual reproduction is simpler and more rapid'],['B','Sexual reproduction requires two individuals who provide mutual nutrient support'],['C','Asexual reproduction requires more energy'],['D','Sexual reproduction increases genetic diversity, which helps survival in stress']], correct: 'D', exp: 'When conditions are stressful, genetic diversity helps the population survive. Asexual reproduction makes identical copies; sexual creates variety.' },
+  { type: 'mc', chapter: 'Ch 5 — Meiosis', q: 'Which of the following is NOT a type of asexual reproduction?', choices: [['A','budding'],['B','fragmentation'],['C','fission'],['D','fertilization']], correct: 'D', exp: 'Fertilization is the joining of sperm and egg — that is sexual reproduction. Budding, fragmentation, and fission are all asexual.' },
+  { type: 'mc', chapter: 'Ch 5 — Meiosis', q: 'Which of the following is NOT a type of sexual life cycle?', choices: [['A','alternation of generations'],['B','haploid'],['C','diploid'],['D','cellular']], correct: 'D', exp: '"Cellular" is not a type of life cycle. The three main types are diploid-dominant, haploid-dominant, and alternation of generations.' },
+  // Fill-in
+  { type: 'fb', chapter: 'Ch 5 — Meiosis', q: 'The stage of meiosis during which homologous chromosomes line up along the equator of the cell is called ___.', choices: [['A','Metaphase I'],['B','Metaphase II'],['C','Anaphase I'],['D','Prophase I']], correct: 'A', exp: 'In Metaphase I, homologous chromosomes pair up as tetrads and line up at the equator. Different from metaphase II, where individual chromosomes line up.' },
+  { type: 'fb', chapter: 'Ch 5 — Meiosis', q: 'The haploid cells resulting from meiosis in either males or females are called ___.', choices: [['A','zygotes'],['B','gametes'],['C','somatic cells'],['D','chromatids']], correct: 'B', exp: 'Gametes are sex cells — sperm in males, eggs in females. They are haploid (n).' },
+  { type: 'fb', chapter: 'Ch 5 — Meiosis', q: 'The process called ___ guarantees that the number of chromosomes in gametes is half the number in body cells.', choices: [['A','mitosis'],['B','fertilization'],['C','meiosis'],['D','cytokinesis']], correct: 'C', exp: 'Meiosis cuts the chromosome number in half through two divisions with only one round of DNA replication.' },
+  { type: 'fb', chapter: 'Ch 5 — Meiosis', q: 'The process in which sperm and egg cells join is called ___.', choices: [['A','meiosis'],['B','fertilization'],['C','cytokinesis'],['D','gametogenesis']], correct: 'B', exp: 'Fertilization combines two haploid sets of chromosomes into one diploid cell — the zygote.' },
+  { type: 'fb', chapter: 'Ch 5 — Meiosis', q: 'The entire span in the life of an organism from one generation to the next is called a(n) ___.', choices: [['A','life cycle'],['B','cell cycle'],['C','generation cycle'],['D','reproductive cycle']], correct: 'A', exp: 'A life cycle describes everything from one generation to the next — growth, development, reproduction.' },
+  { type: 'fb', chapter: 'Ch 5 — Meiosis', q: 'If a chicken muscle cell has 38 chromosomes, a chicken egg cell has ___ chromosomes.', choices: [['A','19'],['B','38'],['C','76'],['D','23']], correct: 'A', exp: 'Body cells are diploid (38). Gametes are haploid — half the number, so 19. After fertilization, 19 + 19 = 38.' },
+
+  // ============ Ch 6 — Mendelian Genetics ============
+  // T/F
+  { type: 'tf', chapter: 'Ch 6 — Mendelian Genetics', q: 'The mating of garden-pea flowers can be easily controlled because the male and female reproductive parts are enclosed within the same flower.', correct: 'True', exp: 'Pea flowers normally self-pollinate because both reproductive structures are inside the closed flower. Mendel could control crosses by manually pollinating.' },
+  { type: 'tf', chapter: 'Ch 6 — Mendelian Genetics', q: 'When Mendel cross-pollinated two varieties from the P generation that exhibited contrasting traits, he called the offspring the F₂ generation.', correct: 'False', exp: 'The first offspring of the P generation is called F₁. The F₂ generation comes from crossing F₁ individuals with each other.' },
+  { type: 'tf', chapter: 'Ch 6 — Mendelian Genetics', q: 'Individuals must exhibit a trait in order for it to appear in their offspring.', correct: 'False', exp: 'A parent can carry a recessive allele without showing it. Two heterozygous parents can produce a homozygous recessive child that does show it.' },
+  { type: 'tf', chapter: 'Ch 6 — Mendelian Genetics', q: 'It is not possible for a gene to have more than two alleles.', correct: 'False', exp: 'An individual has only two alleles per gene, but a gene can have many alleles in a population. ABO blood type has three: Iᴬ, Iᴮ, i.' },
+  { type: 'tf', chapter: 'Ch 6 — Mendelian Genetics', q: 'If all of the offspring of a test cross have the dominant trait, then the genotype of the individual being tested is heterozygous.', correct: 'False', exp: 'If all offspring show the dominant trait, the parent is most likely homozygous dominant. Heterozygous would produce roughly half recessive offspring.' },
+  // MC
+  { type: 'mc', chapter: 'Ch 6 — Mendelian Genetics', q: 'The passing of traits from parents to offspring is called', choices: [['A','genetics'],['B','heredity'],['C','development'],['D','maturation']], correct: 'B', exp: 'Heredity is the passing of traits to the next generation. Genetics is the scientific study of heredity.' },
+  { type: 'mc', chapter: 'Ch 6 — Mendelian Genetics', q: 'The scientific study of heredity is called', choices: [['A','meiosis'],['B','crossing-over'],['C','genetics'],['D','pollination']], correct: 'C', exp: 'Genetics is the field that studies how heredity works — how genes are passed and expressed.' },
+  { type: 'mc', chapter: 'Ch 6 — Mendelian Genetics', q: "Step 1 of Mendel's garden pea experiment, allowing each variety to self-pollinate for several generations, produced the", choices: [['A','F₁ generation'],['B','F₂ generation'],['C','P generation'],['D','P₁ generation']], correct: 'C', exp: 'Self-pollinating for many generations created true-breeding parental lines — the P (parental) generation.' },
+  { type: 'mc', chapter: 'Ch 6 — Mendelian Genetics', q: 'F₂ : F₁ ::', choices: [['A','P : F₁'],['B','F₁ : F₂'],['C','F₁ : P'],['D','dominant trait : recessive trait']], correct: 'C', exp: 'F₂ comes from F₁, just as F₁ comes from P. Each generation produces the next.' },
+  { type: 'mc', chapter: 'Ch 6 — Mendelian Genetics', q: 'An individual heterozygous for a trait and an individual homozygous recessive are crossed. The offspring are', choices: [['A','all the same genotype'],['B','of two different phenotypes'],['C','of three different phenotypes'],['D','all the same phenotype']], correct: 'B', exp: 'A test cross of Tt × tt produces half Tt (dominant) and half tt (recessive) — two phenotypes in a 1:1 ratio.' },
+  { type: 'mc', chapter: 'Ch 6 — Mendelian Genetics', q: 'Tallness is dominant to shortness in pea plants. Which represents a genotype of a pea plant that is heterozygous for tallness?', choices: [['A','Ts'],['B','TT'],['C','Tt'],['D','tt']], correct: 'C', exp: 'Heterozygous = two different alleles. Tt has one dominant T and one recessive t.' },
+  { type: 'mc', chapter: 'Ch 6 — Mendelian Genetics', q: "Mendel's finding that the inheritance of one trait had no effect on the inheritance of another became known as the", choices: [['A','law of dominance'],['B','law of universal inheritance'],['C','law of segregation'],['D','law of independent assortment']], correct: 'D', exp: 'The law of independent assortment: alleles for different traits are distributed to gametes independently. Holds when genes are on different chromosomes.' },
+  { type: 'mc', chapter: 'Ch 6 — Mendelian Genetics', q: 'In rabbits, black fur (B) is dominant to brown (b). In a Bb × Bb cross, the device shown to determine probable outcomes is called a', extras: 'punnett:Bb', choices: [['A','Mendelian box'],['B','Punnett square'],['C','genetic graph'],['D','pedigree']], correct: 'B', exp: 'A Punnett square is named after Reginald Punnett. It predicts genotype and phenotype ratios from a genetic cross.' },
+  { type: 'mc', chapter: 'Ch 6 — Mendelian Genetics', q: 'In the Bb × Bb rabbit cross (B = black, b = brown), both parents in the cross are', extras: 'punnett:Bb', choices: [['A','black'],['B','brown'],['C','homozygous dominant'],['D','homozygous recessive']], correct: 'A', exp: 'Both parents are Bb (heterozygous). Since B is dominant, having even one B allele makes the rabbit black.' },
+  { type: 'mc', chapter: 'Ch 6 — Mendelian Genetics', q: 'In the Bb × Bb rabbit Punnett square, the phenotype of an offspring with genotype Bb would be', extras: 'punnett:Bb', choices: [['A','brown'],['B','black'],['C','a mixture of brown and black'],['D','None of the above']], correct: 'B', exp: 'Bb has one dominant B allele, which is enough to make the rabbit black (the dominant phenotype).' },
+  { type: 'mc', chapter: 'Ch 6 — Mendelian Genetics', q: 'In the Bb × Bb rabbit Punnett square, the genotypic ratio of the possible offspring would be', extras: 'punnett:Bb', choices: [['A','1:1'],['B','3:1'],['C','1:3'],['D','1:2:1']], correct: 'D', exp: '1 BB : 2 Bb : 1 bb = 1:2:1 genotypic ratio. The phenotypic ratio is 3:1 (black to brown).' },
+  { type: 'mc', chapter: 'Ch 6 — Mendelian Genetics', q: 'What is the expected genotypic ratio from a homozygous dominant × heterozygous monohybrid cross? (e.g., TT × Tt)', choices: [['A','4:0'],['B','2:2 (or 1:1)'],['C','1:2:1'],['D','1:3:1']], correct: 'B', exp: 'TT × Tt produces 2 TT and 2 Tt — a 2:2 (1:1) ratio. Only two genotypes possible since no tt can be produced.' },
+  { type: 'mc', chapter: 'Ch 6 — Mendelian Genetics', q: 'What is the expected genotypic ratio from a heterozygous × heterozygous monohybrid cross? (e.g., Tt × Tt)', choices: [['A','1:2:1'],['B','1:3:1'],['C','1:2'],['D','1:0']], correct: 'A', exp: 'Tt × Tt produces 1 TT : 2 Tt : 1 tt — the classic 1:2:1 genotypic ratio. The phenotypic ratio is 3:1.' },
+  { type: 'mc', chapter: 'Ch 6 — Mendelian Genetics', q: 'What is the expected phenotypic ratio from a homozygous dominant × heterozygous monohybrid cross? (e.g., TT × Tt)', choices: [['A','1:3:1'],['B','1:2:1'],['C','2:2'],['D','4:0']], correct: 'D', exp: 'All offspring of TT × Tt inherit at least one T allele, so 100% show the dominant phenotype.' },
+  { type: 'mc', chapter: 'Ch 6 — Mendelian Genetics', q: 'What is the probability that the offspring of a homozygous dominant individual and a homozygous recessive individual will exhibit the dominant phenotype?', choices: [['A','25%'],['B','50%'],['C','66%'],['D','100%']], correct: 'D', exp: 'TT × tt produces all Tt offspring. Every one has a dominant allele, so 100% show the dominant phenotype.' },
+  { type: 'mc', chapter: 'Ch 6 — Mendelian Genetics', q: 'Which of the following traits is controlled by multiple alleles in humans?', choices: [['A','hair color'],['B','blood type'],['C',"widow's peak"],['D','tongue-rolling']], correct: 'B', exp: 'ABO blood type has three alleles in the human population: Iᴬ, Iᴮ, and i.' },
+  { type: 'mc', chapter: 'Ch 6 — Mendelian Genetics', q: 'What would be the blood type of a person who inherited a B allele from one parent and a recessive (i) allele from the other?', choices: [['A','type A'],['B','type B'],['C','type AB'],['D','type BO']], correct: 'B', exp: 'Iᴮi = type B blood. The Iᴮ allele is dominant over i. There is no "BO" blood type.' },
+  { type: 'mc', chapter: 'Ch 6 — Mendelian Genetics', q: 'The ABO blood type gene has three alleles. How many possible phenotypes are there?', choices: [['A','three'],['B','four'],['C','six'],['D','none of the above']], correct: 'B', exp: 'Four phenotypes: A, B, AB, and O. AB exists because Iᴬ and Iᴮ are codominant.' },
+  // Fill-in
+  { type: 'fb', chapter: 'Ch 6 — Mendelian Genetics', q: 'A reproductive process in which fertilization occurs within a single plant is ___.', choices: [['A','cross-pollination'],['B','self-pollination'],['C','codominance'],['D','independent assortment']], correct: 'B', exp: 'Self-pollination happens when pollen from a flower fertilizes the egg of the same flower or another flower on the same plant.' },
+  { type: 'fb', chapter: 'Ch 6 — Mendelian Genetics', q: 'A(n) ___ cross is a cross that involves one pair of contrasting traits.', choices: [['A','dihybrid'],['B','monohybrid'],['C','test'],['D','reciprocal']], correct: 'B', exp: 'A monohybrid cross studies one trait. A dihybrid cross studies two traits at once.' },
+  { type: 'fb', chapter: 'Ch 6 — Mendelian Genetics', q: "In Mendel's experiments, a trait that disappeared in the F₁ generation but reappeared in F₂ was always a(n) ___ trait.", choices: [['A','dominant'],['B','recessive'],['C','codominant'],['D','intermediate']], correct: 'B', exp: 'Recessive traits are masked when paired with dominant alleles. They reappear in F₂ when two heterozygous F₁ each pass on the recessive allele.' },
+  { type: 'fb', chapter: 'Ch 6 — Mendelian Genetics', q: 'Different forms of a particular gene are called ___.', choices: [['A','alleles'],['B','codons'],['C','phenotypes'],['D','genotypes']], correct: 'A', exp: 'Alleles are variants of the same gene. Pea color has a yellow allele and a green allele.' },
+  { type: 'fb', chapter: 'Ch 6 — Mendelian Genetics', q: 'An organism that has two identical alleles for a trait is called ___.', choices: [['A','heterozygous'],['B','homozygous'],['C','hybrid'],['D','dihybrid']], correct: 'B', exp: 'Homozygous = same alleles (TT or tt). Heterozygous = different alleles (Tt).' },
+  { type: 'fb', chapter: 'Ch 6 — Mendelian Genetics', q: 'If some of the offspring of a test cross have the recessive trait, then the genotype of the individual being tested is ___.', choices: [['A','homozygous dominant'],['B','heterozygous'],['C','homozygous recessive'],['D','hemizygous']], correct: 'B', exp: 'If any offspring show the recessive trait, the tested parent must have contributed a recessive allele — making it heterozygous (Tt).' },
+  { type: 'fb', chapter: 'Ch 6 — Mendelian Genetics', q: 'The position of a gene on a chromosome is called its ___.', choices: [['A','allele'],['B','locus'],['C','codon'],['D','exon']], correct: 'B', exp: "Each gene has a specific locus (location) on a chromosome. Plural is loci. Think of it as the gene's address." },
+
+  // ============ Ch 7.1/7.2 — DNA, RNA & Protein Synthesis ============
+  // T/F
+  { type: 'tf', chapter: 'Ch 7.1/7.2 — DNA & Protein Synthesis', q: "Most scientists at that time agreed with Avery's experiments because of their extensive knowledge of DNA.", correct: 'False', exp: 'At the time of Avery (1944), scientists knew little about DNA and most still believed proteins were the genetic material. Acceptance came later.' },
+  { type: 'tf', chapter: 'Ch 7.1/7.2 — DNA & Protein Synthesis', q: 'After replication, the nucleotide sequences in both DNA molecules are identical to each other and to the original.', correct: 'True', exp: 'DNA replication is semiconservative — each new molecule has one old strand and one new strand, and both are identical to the original.' },
+  { type: 'tf', chapter: 'Ch 7.1/7.2 — DNA & Protein Synthesis', q: 'Helicases unwind the double helix of DNA by breaking the nitrogen bonds that link the hydrogen bases.', correct: 'False', exp: 'Wording is backwards. Helicases break hydrogen BONDS that link the nitrogen BASES (not "nitrogen bonds" between "hydrogen bases").' },
+  { type: 'tf', chapter: 'Ch 7.1/7.2 — DNA & Protein Synthesis', q: 'DNA polymerases have the ability to check for errors in nucleotide pairings.', correct: 'True', exp: 'DNA polymerase has a proofreading function — it detects mismatched bases and replaces them. This is why DNA replication has such a low error rate.' },
+  { type: 'tf', chapter: 'Ch 7.1/7.2 — DNA & Protein Synthesis', q: 'Multiple replication forks tend to slow down replication.', correct: 'False', exp: 'Multiple replication forks SPEED UP replication. Starting at many points along the chromosome lets eukaryotic cells copy huge amounts of DNA faster.' },
+  // MC
+  { type: 'mc', chapter: 'Ch 7.1/7.2 — DNA & Protein Synthesis', q: "Griffith's experiments showed that", choices: [['A','dead bacteria could be brought back to life'],['B','harmful bacteria were hardier than harmless bacteria'],['C','heat caused the harmful and harmless varieties to fuse'],['D','genetic material could be transferred between dead bacteria and living bacteria']], correct: 'D', exp: 'Griffith mixed heat-killed harmful (S) bacteria with live harmless (R) bacteria and found the harmless ones became harmful. He called this "transformation."' },
+  { type: 'mc', chapter: 'Ch 7.1/7.2 — DNA & Protein Synthesis', q: 'Avery and his research team concluded that', choices: [['A','RNA was the genetic material'],['B','protein bases were the genetic material'],['C','DNA and RNA were found in the human nucleus'],['D','DNA was the genetic material']], correct: 'D', exp: 'When Avery treated heat-killed bacteria with enzymes destroying different molecules, only destroying DNA stopped transformation — proving DNA carries genetic information.' },
+  { type: 'mc', chapter: 'Ch 7.1/7.2 — DNA & Protein Synthesis', q: 'Molecules of DNA are composed of long chains of', choices: [['A','amino acids'],['B','fatty acids'],['C','monosaccharides'],['D','nucleotides']], correct: 'D', exp: 'DNA is a polymer of nucleotides. Each nucleotide has a sugar, phosphate, and nitrogen base.' },
+  { type: 'mc', chapter: 'Ch 7.1/7.2 — DNA & Protein Synthesis', q: 'Which of the following is NOT part of a molecule of DNA?', choices: [['A','deoxyribose'],['B','nitrogen base'],['C','phosphate'],['D','ribose']], correct: 'D', exp: 'DNA contains deoxyribose (the D in DNA). Ribose is in RNA, not DNA.' },
+  { type: 'mc', chapter: 'Ch 7.1/7.2 — DNA & Protein Synthesis', q: 'A nucleotide consists of', choices: [['A','a sugar, a protein, and adenine'],['B','a sugar, an amino acid, and starch'],['C','a sugar, a phosphate group, and a nitrogen base'],['D','a starch, a phosphate group, and a nitrogen base']], correct: 'C', exp: 'Every nucleotide: (1) five-carbon sugar, (2) phosphate group, (3) nitrogen base (A, T, G, or C in DNA).' },
+  { type: 'mc', chapter: 'Ch 7.1/7.2 — DNA & Protein Synthesis', q: 'The part of the molecule for which deoxyribonucleic acid is named is the', choices: [['A','phosphate group'],['B','sugar'],['C','nitrogen base'],['D','polyadenylation tail']], correct: 'B', exp: 'The name comes from its sugar: deoxy + ribose. "Deoxy" means missing an oxygen compared to ribose.' },
+  { type: 'mc', chapter: 'Ch 7.1/7.2 — DNA & Protein Synthesis', q: 'Of the four nitrogen bases in DNA, which two are purines and which two are pyrimidines?', choices: [['A','adenine–thymine; uracil–cytosine'],['B','adenine–thymine; guanine–cytosine'],['C','adenine–guanine; thymine–cytosine'],['D','uracil–thymine; guanine–cytosine']], correct: 'C', exp: 'Purines (double-ring): A and G. Pyrimidines (single-ring): T, C, and U in RNA. Memory: PURe As Gold for purines.' },
+  { type: 'mc', chapter: 'Ch 7.1/7.2 — DNA & Protein Synthesis', q: 'The scientists credited with establishing the structure of DNA are', choices: [['A','Avery and Chargaff'],['B','Hershey and Chase'],['C','Mendel and Griffith'],['D','Watson and Crick']], correct: 'D', exp: 'Watson and Crick published the double helix in 1953, using X-ray data from Rosalind Franklin. Nobel Prize in 1962.' },
+  { type: 'mc', chapter: 'Ch 7.1/7.2 — DNA & Protein Synthesis', q: 'The amount of guanine in an organism always equals the amount of', choices: [['A','protein'],['B','thymine'],['C','adenine'],['D','cytosine']], correct: 'D', exp: "Chargaff's rule: A=T and G=C. This base-pairing rule helped Watson and Crick figure out the double helix." },
+  { type: 'mc', chapter: 'Ch 7.1/7.2 — DNA & Protein Synthesis', q: 'During DNA replication, if a portion of the original strand is CCTAGCT, the new strand will be', choices: [['A','TTGCATG'],['B','AAGTATC'],['C','CCTAGCT'],['D','GGATCGA']], correct: 'D', exp: 'Use base pairing C↔G, T↔A. CCTAGCT → GGATCGA.' },
+  { type: 'mc', chapter: 'Ch 7.1/7.2 — DNA & Protein Synthesis', q: 'adenine : thymine ::', choices: [['A','protein : DNA'],['B','Watson : Crick'],['C','guanine : cytosine'],['D','adenine : DNA']], correct: 'C', exp: 'Adenine pairs with thymine, just as guanine pairs with cytosine. Both are complementary base pairs in DNA.' },
+  { type: 'mc', chapter: 'Ch 7.1/7.2 — DNA & Protein Synthesis', q: 'Which of the following is NOT true about DNA replication?', choices: [['A','It must occur before a cell can divide'],['B','Two complementary strands are duplicated'],['C','The double strand unwinds and unzips while being duplicated'],['D','The process is catalyzed by enzymes called DNA mutagens']], correct: 'D', exp: 'The enzymes are DNA POLYMERASES, not mutagens. A "mutagen" actually CAUSES mutations.' },
+  { type: 'mc', chapter: 'Ch 7.1/7.2 — DNA & Protein Synthesis', q: 'The enzymes responsible for adding nucleotides to the exposed DNA template bases are', choices: [['A','replicases'],['B','DNA polymerases'],['C','helicases'],['D','RNA polymerases']], correct: 'B', exp: 'DNA polymerase reads the template strand and adds complementary nucleotides to build the new strand. It also proofreads.' },
+  { type: 'mc', chapter: 'Ch 7.1/7.2 — DNA & Protein Synthesis', q: 'The enzymes that unwind DNA are called', choices: [['A','double helixes'],['B','DNA helicases'],['C','RNA polymerases'],['D','DNA polymerases']], correct: 'B', exp: 'Helicases unwind the double helix by breaking hydrogen bonds between paired bases.' },
+  { type: 'mc', chapter: 'Ch 7.1/7.2 — DNA & Protein Synthesis', q: 'In RNA molecules, adenine is complementary to', choices: [['A','cytosine'],['B','guanine'],['C','thymine'],['D','uracil']], correct: 'D', exp: 'In RNA, thymine is replaced by uracil. A in DNA template pairs with U in RNA.' },
+  { type: 'mc', chapter: 'Ch 7.1/7.2 — DNA & Protein Synthesis', q: 'During transcription,', choices: [['A','proteins are synthesized'],['B','DNA is replicated'],['C','mRNA is produced'],['D','translation occurs']], correct: 'C', exp: 'Transcription copies a DNA gene into mRNA. DNA → mRNA. The mRNA then travels to the ribosome for translation.' },
+  { type: 'mc', chapter: 'Ch 7.1/7.2 — DNA & Protein Synthesis', q: 'Each nucleotide triplet in mRNA that specifies a particular amino acid is called a(n)', choices: [['A','intron'],['B','codon'],['C','anticodon'],['D','exon']], correct: 'B', exp: 'A codon is a 3-base sequence in mRNA that codes for one amino acid. 4³ = 64 possible codons.' },
+  { type: 'mc', chapter: 'Ch 7.1/7.2 — DNA & Protein Synthesis', q: 'For the mRNA sequence CUCAAGUGCUUC, what protein portion is coded? (Use standard genetic code)', choices: [['A','Ser–Tyr–Arg–Gly'],['B','Val–Asp–Pro–His'],['C','Leu–Lys–Cys–Phe'],['D','Pro–Glu–Leu–Val']], correct: 'C', exp: 'CUC=Leu, AAG=Lys, UGC=Cys, UUC=Phe. Result: Leu-Lys-Cys-Phe.' },
+  { type: 'mc', chapter: 'Ch 7.1/7.2 — DNA & Protein Synthesis', q: 'For the mRNA sequence CUCAAGUGCUUC, the anticodons on tRNAs would be', choices: [['A','GAG–UUC–ACG–AAG'],['B','GAG–TTC–ACG–AAG'],['C','CUC–GAA–CGU–CUU'],['D','CUU–CGU–GAA–CUC']], correct: 'A', exp: 'Anticodons are complementary RNA (A↔U, G↔C). CUC↔GAG, AAG↔UUC, UGC↔ACG, UUC↔AAG.' },
+  { type: 'mc', chapter: 'Ch 7.1/7.2 — DNA & Protein Synthesis', q: 'For the mRNA sequence CUCAAGUGCUUC, the DNA template would be', choices: [['A','CUCAAGUGCUUC'],['B','GAGUUCACGAAG'],['C','GAGTTCACGAAG'],['D','AGACCTGTAGGA']], correct: 'C', exp: 'DNA template uses T instead of U. Complement of CUCAAGUGCUUC is GAGTTCACGAAG.' },
+  { type: 'mc', chapter: 'Ch 7.1/7.2 — DNA & Protein Synthesis', q: 'Given protein tyrosine–proline–aspartic acid–isoleucine–cysteine, which DNA sequence codes for it?', choices: [['A','AUGGGUCUAUAUACG'],['B','ATGGGTCTATATACG'],['C','GCAAACTCGCGCGTA'],['D','ATAGGGCTTTAAACA']], correct: 'B', exp: 'Work backwards: amino acids → mRNA → DNA. DNA never has U, so option A is wrong. The correct DNA template is ATGGGTCTATATACG.' },
+  { type: 'mc', chapter: 'Ch 7.1/7.2 — DNA & Protein Synthesis', q: 'In order for translation to occur, mRNA must migrate to the', choices: [['A','ribosomes'],['B','lac operon'],['C','RNA polymerase'],['D','enhancer']], correct: 'A', exp: 'mRNA is made in the nucleus then travels to a ribosome in the cytoplasm, where codons are read and amino acids linked.' },
+  { type: 'mc', chapter: 'Ch 7.1/7.2 — DNA & Protein Synthesis', q: 'mRNA : nucleus ::', choices: [['A','nucleus : protein'],['B','protein : cytoplasm'],['C','nucleus : ribosomes'],['D','protein : nucleus']], correct: 'B', exp: 'mRNA is made in the nucleus, just as protein is made in the cytoplasm (at ribosomes).' },
+  { type: 'mc', chapter: 'Ch 7.1/7.2 — DNA & Protein Synthesis', q: 'codon : mRNA ::', choices: [['A','P site : RNA molecules'],['B','ribosome : DNA molecules'],['C','DNA : protein'],['D','anticodon : tRNA']], correct: 'D', exp: 'Codons are 3-base sequences on mRNA; anticodons are 3-base sequences on tRNA. They pair during translation.' },
+  { type: 'mc', chapter: 'Ch 7.1/7.2 — DNA & Protein Synthesis', q: 'The portions of mRNA molecules that actually code for the production of proteins are called', choices: [['A','mutons'],['B','exons'],['C','introns'],['D','exposons']], correct: 'B', exp: 'Exons are the coding sequences that EXit the nucleus and are EXpressed. Introns are non-coding sequences that get cut out.' },
+  { type: 'mc', chapter: 'Ch 7.1/7.2 — DNA & Protein Synthesis', q: 'The non-coding portions of mRNA that are separated from the DNA actually used during transcription are called', choices: [['A','mutons'],['B','exons'],['C','introns'],['D','exposons']], correct: 'C', exp: 'Introns are removed (spliced out) before mRNA leaves the nucleus. Only exons remain in the mature mRNA.' },
+  // Fill-in
+  { type: 'fb', chapter: 'Ch 7.1/7.2 — DNA & Protein Synthesis', q: "Griffith's experiment showed that live bacteria without capsules acquired the ability to make capsules from dead bacteria with capsules in a process called ___.", choices: [['A','translation'],['B','transformation'],['C','transduction'],['D','transcription']], correct: 'B', exp: 'Transformation is when a cell takes up foreign DNA and is genetically changed by it.' },
+  { type: 'fb', chapter: 'Ch 7.1/7.2 — DNA & Protein Synthesis', q: "Avery's prevention of transformation using DNA-destroying enzymes provided evidence that ___ molecules function as the hereditary material.", choices: [['A','protein'],['B','DNA'],['C','RNA'],['D','lipid']], correct: 'B', exp: 'When DNase destroyed the DNA, transformation stopped — proving DNA carries genetic information.' },
+  { type: 'fb', chapter: 'Ch 7.1/7.2 — DNA & Protein Synthesis', q: 'The name of the five-carbon sugar that makes up part of the backbone of DNA is ___.', choices: [['A','ribose'],['B','glucose'],['C','deoxyribose'],['D','fructose']], correct: 'C', exp: 'Deoxyribose forms the "rails" of the DNA ladder with phosphate groups. Ribose is in RNA.' },
+  { type: 'fb', chapter: 'Ch 7.1/7.2 — DNA & Protein Synthesis', q: 'Watson and Crick determined that DNA molecules have the shape of a(n) ___ helix.', choices: [['A','single'],['B','double'],['C','triple'],['D','quadruple']], correct: 'B', exp: 'A double helix — two strands twisted around each other like a spiral ladder.' },
+  { type: 'fb', chapter: 'Ch 7.1/7.2 — DNA & Protein Synthesis', q: 'Due to the strict pairing of nitrogen bases, the two strands of DNA are said to be ___ to each other.', choices: [['A','identical'],['B','parallel'],['C','complementary'],['D','symmetrical']], correct: 'C', exp: 'Complementary because each base on one strand has a specific partner on the other (A↔T, G↔C).' },
+  { type: 'fb', chapter: 'Ch 7.1/7.2 — DNA & Protein Synthesis', q: 'The process by which DNA copies itself is called ___.', choices: [['A','transcription'],['B','translation'],['C','replication'],['D','transformation']], correct: 'C', exp: 'DNA replication produces two identical DNA molecules from one. Happens in S phase before cell division.' },
+  { type: 'fb', chapter: 'Ch 7.1/7.2 — DNA & Protein Synthesis', q: 'A sequence of DNA at the beginning of a gene that signals RNA polymerase to begin transcription is called a(n) ___.', choices: [['A','operator'],['B','promoter'],['C','terminator'],['D','enhancer']], correct: 'B', exp: 'A promoter is the "start here" signal for RNA polymerase. Different genes have different promoters.' },
+  { type: 'fb', chapter: 'Ch 7.1/7.2 — DNA & Protein Synthesis', q: 'Transcription and translation are stages in the process of ___.', choices: [['A','DNA replication'],['B','protein synthesis (gene expression)'],['C','meiosis'],['D','mitosis']], correct: 'B', exp: 'Protein synthesis (gene expression) has two stages: transcription (DNA → mRNA) and translation (mRNA → protein).' },
+
+  // ============ Ch 7.3/7.4 — Gene Regulation & Mutations ============
+  // T/F
+  { type: 'tf', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: 'Repressor proteins are bound to the DNA in front of each gene, readily allowing transcription to take place as the RNA polymerase moves along that gene.', correct: 'False', exp: 'Repressors BLOCK transcription. They bind the operator and prevent RNA polymerase from moving along the gene.' },
+  { type: 'tf', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: 'Cells regulate gene expression so that each gene will be transcribed only when it is needed.', correct: 'True', exp: 'Gene regulation is essential. Making proteins is energy-expensive, so cells only express genes when their products are needed.' },
+  { type: 'tf', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: 'Using a gene to make a protein is called gene synthesis.', correct: 'False', exp: 'The correct term is gene EXPRESSION (or protein synthesis). "Gene synthesis" is not a standard term.' },
+  { type: 'tf', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: 'A person who is lactose intolerant has inherited a mutation, since his/her cells cannot metabolize lactose.', correct: 'False', exp: 'Lactose intolerance is usually due to NORMAL gene regulation — the lactase gene gets turned down with age. It is not typically a mutation.' },
+  { type: 'tf', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: 'Mutations are caused by environmental factors known as mutagens.', correct: 'True', exp: 'Mutagens cause mutations. Examples: UV radiation, X-rays, certain chemicals, some viruses.' },
+  { type: 'tf', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: 'All the cells in your body have the exactly same types of genes.', correct: 'True', exp: 'Every body cell has the same complete DNA. What differs is which genes are EXPRESSED in each cell type.' },
+  { type: 'tf', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: 'Mutations that result from the substitution of one nitrogen base for another are called deletions.', correct: 'False', exp: 'Substitution = point mutation. Deletion is removal of a base or section. Different things.' },
+  { type: 'tf', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: 'Because of DNA polymerase and its proof-reading ability, the cell has the capability to prevent mutations before they occur.', correct: 'True', exp: 'DNA polymerase detects mismatched bases and replaces them. Reduces errors dramatically — about 1 mistake per billion bases.' },
+  { type: 'tf', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: 'A point mutation is the failure of a chromosome pair to separate during mitosis.', correct: 'False', exp: 'A point mutation is a single-base change. Chromosome separation failure is called NONDISJUNCTION — different thing.' },
+  // MC
+  { type: 'mc', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: 'A missense mutation', choices: [['A','codes for a different amino acid'],['B','results in a premature stop codon'],['C','codes for the same amino acid'],['D','results in a frameshift mutation']], correct: 'A', exp: 'Missense = different amino acid. Compare: silent (same amino acid), nonsense (premature stop), frameshift (insertion/deletion shifts reading frame).' },
+  { type: 'mc', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: 'Which of the following statements concerning mutations is correct?', choices: [['A','Mutations may happen spontaneously'],['B','Mutations may be prevented by DNA polymerase'],['C','Mutations may occur during DNA replication or transcription'],['D','All of the above']], correct: 'D', exp: 'All three are true. Mutations can happen randomly, be prevented by proofreading, and occur during DNA copying or RNA making.' },
+  { type: 'mc', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: 'Chromosomal alterations include deletions and', choices: [['A','transfer mutations'],['B','doubling mutations'],['C','inference mutations'],['D','translocation mutations']], correct: 'D', exp: 'Main chromosomal alterations: deletions, duplications, inversions, translocations. A translocation moves a piece to a different chromosome.' },
+  { type: 'mc', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: 'Which of the following mutations can result in a genetic disorder?', choices: [['A','a deletion'],['B','a frameshift'],['C','a translocation'],['D','All of the above']], correct: 'D', exp: 'Any of these can cause disease. Deletions: cystic fibrosis. Frameshifts: many disorders. Translocations: certain leukemias.' },
+  { type: 'mc', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: 'The type of point mutation in which an amino acid is substituted for a stop codon is a ___ mutation.', choices: [['A','frameshift'],['B','missense'],['C','nonsense'],['D','all of the above']], correct: 'C', exp: 'Nonsense mutation creates a premature STOP codon. Cuts the protein short, usually destroying its function.' },
+  { type: 'mc', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: 'Which statement best describes the TATA box?', choices: [['A','A regulatory element that is part of most eukaryotic genes'],['B','A regulatory element that is part of most prokaryotic genes'],['C','A regulatory protein that is part of most eukaryotic genes'],['D','A regulatory protein that is part of most prokaryotic genes']], correct: 'A', exp: 'TATA box is a short DNA sequence (a regulatory ELEMENT, not a protein) found near the start of most eukaryotic genes.' },
+  { type: 'mc', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: 'Where on the lac operon does a repressor molecule bind when lactose is absent?', choices: [['A','to the operator'],['B','to the promoter'],['C','to a structural gene'],['D','to the regulator']], correct: 'A', exp: 'The repressor binds the OPERATOR (between promoter and structural genes), blocking RNA polymerase from transcribing the genes.' },
+  { type: 'mc', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: 'The function of an operator is to', choices: [['A','regulate access of RNA polymerase to specific genes'],['B','turn on and off the molecules of tRNA'],['C','control the process of transcription within the nucleus'],['D','generate amino acids for protein synthesis']], correct: 'A', exp: 'The operator is the DNA region where repressors bind. It controls whether RNA polymerase can transcribe the gene.' },
+  { type: 'mc', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: 'Gene regulation during development involves', choices: [['A','the lac operon'],['B','proto-oncogenes and tumor-suppressor genes'],['C','homeobox genes'],['D','all of the above']], correct: 'C', exp: 'Homeobox (Hox) genes are master regulators of body plan and development — they determine where limbs and organs form during embryonic development.' },
+  { type: 'mc', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: 'The lac operon is turned on when', choices: [['A','lactose is present'],['B','lactose is absent'],['C','glucose is present'],['D','glucose is absent']], correct: 'A', exp: 'Lactose binds the repressor and inactivates it. The repressor falls off the operator, allowing transcription of lactose-digesting genes.' },
+  { type: 'mc', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: 'The presence of a repressor protein prevents the action of what enzyme?', choices: [['A','DNA polymerase'],['B','lactase'],['C','RNA polymerase'],['D','permease']], correct: 'C', exp: 'Repressors block transcription, which is done by RNA polymerase. By binding the operator, the repressor blocks RNA polymerase.' },
+  { type: 'mc', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: 'In what type of organisms are operons found?', choices: [['A','prokaryotes only'],['B','eukaryotes only'],['C','only organisms with lactose in their environment'],['D','humans only']], correct: 'A', exp: 'Operons (clustered gene regulation units) are found only in prokaryotes. Eukaryotes regulate genes individually using more complex methods.' },
+  { type: 'mc', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: 'A group of genes that code for functionally related enzymes, their promoter site, and the operator that controls them all function together as a(n)', choices: [['A','exon'],['B','intron'],['C','operon'],['D','ribosome']], correct: 'C', exp: 'An operon is the prokaryotic regulation unit: structural genes + promoter + operator. The lac operon is the classic example.' },
+  // Matching (presented as MC with full word bank)
+  { type: 'match', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: 'MATCHING: Using a gene to make a protein', choices: [['A','activator'],['B','cancer'],['C','chromosomal alteration'],['D','duplication'],['E','gene expression'],['F','insertion'],['G','inversion'],['H','lac operon'],['I','mutation'],['J','point mutation']], correct: 'E', exp: 'Gene expression = using a gene to make a protein. Includes transcription and translation.' },
+  { type: 'match', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: 'MATCHING: Removal of a segment of a chromosome', choices: [['A','duplication'],['B','insertion'],['C','inversion'],['D','deletion'],['E','translocation'],['F','frameshift'],['G','point mutation'],['H','mutation']], correct: 'D', exp: 'A deletion is when a section of a chromosome is removed. Can range from one base to large stretches of DNA.' },
+  { type: 'match', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: 'MATCHING: Promotes transcription by allowing the interaction of RNA polymerase with the promoter', choices: [['A','activator'],['B','repressor'],['C','enhancer'],['D','operator'],['E','promoter'],['F','regulatory element']], correct: 'A', exp: 'An activator helps turn ON transcription. It binds DNA and helps RNA polymerase attach to the promoter.' },
+  { type: 'match', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: 'MATCHING: Occurs in cells other than gametes', choices: [['A','germline mutations'],['B','somatic mutations'],['C','point mutations'],['D','silent mutations']], correct: 'B', exp: 'Somatic mutations occur in body cells (not gametes). Not inherited. Germline mutations occur in gametes and ARE passed on.' },
+  { type: 'match', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: 'MATCHING: Change in the sequence of bases of DNA or RNA', choices: [['A','translation'],['B','transcription'],['C','mutation'],['D','replication']], correct: 'C', exp: 'A mutation is any change to the DNA or RNA sequence.' },
+  { type: 'match', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: 'MATCHING: Doubling of a segment of a chromosome', choices: [['A','deletion'],['B','duplication'],['C','inversion'],['D','translocation']], correct: 'B', exp: 'A duplication is when a segment of a chromosome is copied so it appears twice.' },
+  { type: 'match', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: 'MATCHING: Region of a gene where RNA polymerase binds', choices: [['A','operator'],['B','enhancer'],['C','promoter'],['D','exon']], correct: 'C', exp: 'The promoter is the "start here" sign on a gene — where RNA polymerase binds to begin transcription.' },
+  { type: 'match', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: 'MATCHING: Mutations that change chromosome structure', choices: [['A','point mutation'],['B','chromosomal alteration'],['C','silent mutation'],['D','frameshift']], correct: 'B', exp: 'Chromosomal alterations are large-scale changes — deletions, duplications, inversions, translocations.' },
+  { type: 'match', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: 'MATCHING: Addition of nucleotides into the chromosome', choices: [['A','deletion'],['B','duplication'],['C','insertion'],['D','translocation']], correct: 'C', exp: 'An insertion adds nucleotides into the existing sequence. Not in multiples of 3 = frameshift.' },
+  { type: 'match', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: 'MATCHING: Generally caused by mutations in genes that regulate the cell cycle', choices: [['A','diabetes'],['B','cancer'],['C','Down syndrome'],['D','sickle cell']], correct: 'B', exp: 'Cancer is caused by mutations in cell cycle regulators — proto-oncogenes and tumor-suppressor genes.' },
+  { type: 'match', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: "MATCHING: Distant regions of DNA that can loop back to interact with the gene's promoter", choices: [['A','operator'],['B','exon'],['C','enhancer'],['D','intron']], correct: 'C', exp: 'Enhancers are far from the gene they regulate. DNA loops so the enhancer can contact the promoter, boosting transcription.' },
+  { type: 'match', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: 'MATCHING: Transcribes DNA to RNA', choices: [['A','DNA polymerase'],['B','RNA polymerase'],['C','helicase'],['D','ligase']], correct: 'B', exp: 'RNA polymerase reads DNA and produces RNA (transcription).' },
+  { type: 'match', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: 'MATCHING: A change in a single nucleotide in DNA', choices: [['A','frameshift'],['B','point mutation'],['C','chromosomal alteration'],['D','translocation']], correct: 'B', exp: 'A point mutation is a single-base change. Types: silent, missense, nonsense.' },
+  { type: 'match', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: 'MATCHING: Reversal of a segment of a chromosome', choices: [['A','deletion'],['B','duplication'],['C','inversion'],['D','translocation']], correct: 'C', exp: 'An inversion is when a section breaks off, flips backward, and reattaches. Genes are in reverse order.' },
+  { type: 'match', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: 'MATCHING: When not expressed, leads to cancer', choices: [['A','proto-oncogene'],['B','tumor-suppressor gene'],['C','oncogene'],['D','homeobox gene']], correct: 'B', exp: 'Tumor-suppressor genes (like p53) normally stop cell division when something is wrong. When they fail, the brakes come off — cancer.' },
+  { type: 'match', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: 'MATCHING: Regulatory region of DNA located near the promoter', choices: [['A','regulatory element'],['B','enhancer'],['C','operator'],['D','exon']], correct: 'A', exp: 'Regulatory elements (like the TATA box) are DNA sequences near the promoter that control transcription. Different from regulatory PROTEINS.' },
+  { type: 'match', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: 'MATCHING: Controls lactose metabolism', choices: [['A','TATA box'],['B','lac operon'],['C','homeobox gene'],['D','tumor-suppressor gene']], correct: 'B', exp: 'The lac operon is the bacterial gene cluster that controls lactose digestion in E. coli.' },
+  // Fill-in
+  { type: 'fb', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: 'A cluster of genes called an operon is found only in ___ cells.', choices: [['A','eukaryotic'],['B','prokaryotic'],['C','animal'],['D','plant']], correct: 'B', exp: 'Operons are unique to prokaryotes (bacteria). Eukaryotes regulate genes individually with more complex mechanisms.' },
+  { type: 'fb', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: 'The mutation of the CAG codon (glutamine) to a CAA codon (also glutamine) could be described as a ___ mutation.', choices: [['A','missense'],['B','nonsense'],['C','silent'],['D','frameshift']], correct: 'C', exp: 'Silent mutation = DNA changes but still codes for the SAME amino acid. The genetic code is redundant, so multiple codons can code for one amino acid.' },
+  { type: 'fb', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: '___ mutations are those that can be transmitted to offspring.', choices: [['A','Somatic'],['B','Germline'],['C','Silent'],['D','Missense']], correct: 'B', exp: 'Germline mutations occur in gametes and are passed to offspring, existing in every cell of the child.' },
+  { type: 'fb', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: 'A frameshift mutation is a deletion or insertion that changes the ___ of the base sequence.', choices: [['A','reading frame'],['B','genetic code'],['C','translation site'],['D','codon sequence']], correct: 'A', exp: 'A frameshift shifts how codons are read — every codon after the mutation gets re-grouped into different 3-base sets. Usually breaks the protein.' },
+  { type: 'fb', chapter: 'Ch 7.3/7.4 — Gene Regulation', q: 'A protein that prevents transcription by blocking the path of RNA polymerase along DNA is called a(n) ___.', choices: [['A','activator'],['B','repressor'],['C','enhancer'],['D','operator']], correct: 'B', exp: 'Repressors bind the operator and physically block RNA polymerase. Gene "off switches."' },
+
+  // ============ Ch 8 — Biotechnology ============
+  // MC
+  { type: 'mc', chapter: 'Ch 8 — Biotechnology', q: 'Biotechnology', choices: [['A','is the use of technology to change the genetic makeup of living things for human purposes'],['B','has raised many ethical questions'],['C','can make food taste better'],['D','all of the above']], correct: 'D', exp: 'All true. Biotechnology modifies organisms for human benefit, has many uses, and raises ethical questions.' },
+  { type: 'mc', chapter: 'Ch 8 — Biotechnology', q: 'Gene cloning could be used to', choices: [['A','isolate and make copies of a normal gene'],['B','cure genetic diseases'],['C','diagnose genetic conditions'],['D','isolate mutations in the DNA']], correct: 'A', exp: 'Gene cloning produces many copies of an isolated gene. Cloned genes can be used later in therapy or diagnosis, but cloning itself only copies.' },
+  { type: 'mc', chapter: 'Ch 8 — Biotechnology', q: 'PCR involves (1) Denaturing (two single strands), (2) Extension (adds nucleotides to primers), (3) Annealing (mixes single-stranded DNA with primers). Which are correct?', choices: [['A','1 only'],['B','1 and 2'],['C','2 and 3'],['D','1, 2, and 3']], correct: 'D', exp: 'All three are part of PCR: denaturing (95°C), annealing (55°C, primers bind), extension (72°C, Taq polymerase copies DNA).' },
+  { type: 'mc', chapter: 'Ch 8 — Biotechnology', q: 'Primers used during PCR are', choices: [['A','sequences of DNA made by Taq polymerase'],['B','short segments of DNA that serve as a starting point for Taq polymerase'],['C','involved in the denaturation process'],['D','also used in gene cloning to place the gene into the plasmid']], correct: 'B', exp: 'Primers are short DNA sequences (~20 bases) that bind to specific spots and give Taq polymerase a starting point.' },
+  { type: 'mc', chapter: 'Ch 8 — Biotechnology', q: 'Which is true about PCR? (1) Denaturation ~95°C. (2) Annealing ~55°C. (3) Extension ~72°C.', choices: [['A','1 only'],['B','2 only'],['C','2 and 3'],['D','1, 2, and 3']], correct: 'D', exp: 'All three temperatures are correct. PCR machines cycle through them automatically. High → low → medium.' },
+  { type: 'mc', chapter: 'Ch 8 — Biotechnology', q: 'The steps of gene cloning, in order, are', choices: [['A','isolation, transformation, ligation, and selection'],['B','isolation, ligation, transformation, and selection'],['C','ligation, transformation, isolation, and selection'],['D','selection, transformation, ligation, and isolation']], correct: 'B', exp: 'Isolation → Ligation → Transformation → Selection. Memory: "I Love To Sing."' },
+  { type: 'mc', chapter: 'Ch 8 — Biotechnology', q: 'Transgenic crops', choices: [['A','include insects modified to resist infecting plants'],['B','include a purple tomato modified to contain a cancer-fighting compound'],['C','include a cow that no longer needs to feed on grass'],['D','all of the above']], correct: 'B', exp: 'Crops are PLANTS. The purple tomato is a real example — engineered to produce anthocyanins (antioxidants found in blueberries).' },
+  { type: 'mc', chapter: 'Ch 8 — Biotechnology', q: 'Recombinant DNA', choices: [['A','results from the ligation of an isolated gene and plasmid DNA'],['B','is inserted into a living cell in the transformation process'],['C','is screened for in the selection process'],['D','all of the above']], correct: 'D', exp: 'All true. Recombinant DNA is made in ligation, inserted in transformation, and identified in selection.' },
+  { type: 'mc', chapter: 'Ch 8 — Biotechnology', q: 'Biotechnology can be used to', choices: [['A','develop crops that are resistant to insects'],['B','create organisms that are useful to humans'],['C','free innocent people from jail'],['D','all of the above']], correct: 'D', exp: 'All true. Insect-resistant crops (Bt corn), useful bacteria (producing insulin), DNA evidence (freeing the wrongly convicted).' },
+  { type: 'mc', chapter: 'Ch 8 — Biotechnology', q: 'Ethical, legal, and social issues raised by biotechnology include', choices: [['A','the ownership and safety of GMOs and crops'],['B','the ownership and safety of genetically modified animals and people'],['C','the creation of mutations for serious genetic disorders'],['D','all of the above']], correct: 'D', exp: 'All are real ELSI concerns. Who owns GMOs? Are they safe? Should we modify animals and humans?' },
+  { type: 'mc', chapter: 'Ch 8 — Biotechnology', q: 'The steps of PCR, in order, are', choices: [['A','denaturing, annealing, and extension'],['B','denaturing, extension, and annealing'],['C','annealing, extension, and denaturation'],['D','extension, annealing, and denaturation']], correct: 'A', exp: 'Denaturing (heat) → Annealing (cool, primers bind) → Extension (Taq builds new strand). Then repeat.' },
+  { type: 'mc', chapter: 'Ch 8 — Biotechnology', q: 'Transgenic crops have been created that', choices: [['A','yield more food'],['B','resist insects'],['C','survive droughts'],['D','all of the above']], correct: 'D', exp: 'All true. Examples: high-yield rice, Bt corn (insect resistance), drought-tolerant maize, Golden Rice (vitamin A).' },
+  { type: 'mc', chapter: 'Ch 8 — Biotechnology', q: 'PCR allows scientists to', choices: [['A','rapidly make many copies of a gene or other DNA segment'],['B','clone a recombinant DNA in bacteria'],['C','ligate together two pieces of DNA from different sources'],['D','all of the above']], correct: 'A', exp: 'PCR amplifies DNA — making many copies of a target sequence quickly. Options B and C describe gene cloning, a different technique.' },
+  { type: 'mc', chapter: 'Ch 8 — Biotechnology', q: 'The first human protein produced using biotechnology was', choices: [['A','cytokine'],['B','insulin'],['C','DNA ligase'],['D','Taq polymerase']], correct: 'B', exp: 'Human insulin was first produced using biotech in 1978. Before this, diabetics used pig/cow insulin, which sometimes caused allergic reactions.' },
+  { type: 'mc', chapter: 'Ch 8 — Biotechnology', q: 'Biotechnology methods are used in (1) medicine, (2) agriculture, (3) law enforcement. Which apply?', choices: [['A','1 only'],['B','2 only'],['C','1 and 2'],['D','1, 2, and 3']], correct: 'D', exp: 'All three. Medicine (insulin, vaccines), agriculture (GMO crops), law enforcement (DNA fingerprinting).' },
+  { type: 'mc', chapter: 'Ch 8 — Biotechnology', q: '___ involves heating the DNA to break the hydrogen bonds that hold the two strands together.', choices: [['A','Annealing'],['B','Extension'],['C','Gene cloning'],['D','Denaturing']], correct: 'D', exp: 'Denaturing uses high heat (~95°C) to break hydrogen bonds between bases, separating the double helix into two single strands.' },
+  // T/F
+  { type: 'tf', chapter: 'Ch 8 — Biotechnology', q: 'Taq polymerase is an enzyme that can function at very high temperatures.', correct: 'True', exp: 'Taq was isolated from Thermus aquaticus — a bacterium that lives in hot springs. It survives 95°C denaturation, making PCR work as a repeating cycle.' },
+  { type: 'tf', chapter: 'Ch 8 — Biotechnology', q: 'Biotechnology has been used to free innocent people from jail.', correct: 'True', exp: 'DNA evidence (using PCR and DNA fingerprinting) has freed hundreds of wrongly convicted prisoners through the Innocence Project.' },
+  { type: 'tf', chapter: 'Ch 8 — Biotechnology', q: 'DNA ligase is an enzyme that joins together pieces of DNA.', correct: 'True', exp: 'DNA ligase is the "glue" — forms bonds in the sugar-phosphate backbone. Essential in gene cloning and DNA replication.' },
+  { type: 'tf', chapter: 'Ch 8 — Biotechnology', q: 'Denaturing yields two single strands of DNA.', correct: 'True', exp: 'High heat (~95°C) breaks the hydrogen bonds holding the strands together, separating the double helix into two single strands.' },
+  { type: 'tf', chapter: 'Ch 8 — Biotechnology', q: 'Annealing involves heating the single strands of DNA and mixing them with short DNA segments called primers.', correct: 'False', exp: 'Annealing involves COOLING (not heating). After denaturation, the temp is LOWERED to ~55°C so primers can bind.' },
+  { type: 'tf', chapter: 'Ch 8 — Biotechnology', q: 'In ligation, the recombinant DNA is inserted into a living cell.', correct: 'False', exp: 'In ligation, the gene is JOINED to a plasmid (DNA ligase). The step that inserts recombinant DNA into a cell is called TRANSFORMATION.' },
+  { type: 'tf', chapter: 'Ch 8 — Biotechnology', q: 'Extension occurs when an enzyme, Taq DNA ligase, adds nucleotides to the primers.', correct: 'False', exp: 'Extension uses Taq POLYMERASE, not Taq ligase. There is no enzyme called "Taq DNA ligase."' },
+  // Fill-in
+  { type: 'fb', chapter: 'Ch 8 — Biotechnology', q: 'Biotechnology is the use of technology to change the genetic makeup of living things for ___ purposes.', choices: [['A','scientific'],['B','medical'],['C','human'],['D','agricultural']], correct: 'C', exp: 'The defining feature of biotechnology is humans intentionally modifying organisms for our own benefit.' },
+  { type: 'fb', chapter: 'Ch 8 — Biotechnology', q: 'The last step of gene cloning is ___.', choices: [['A','isolation'],['B','ligation'],['C','transformation'],['D','selection']], correct: 'D', exp: 'After isolation, ligation, and transformation, SELECTION identifies which cells successfully took up the recombinant plasmid.' },
+  { type: 'fb', chapter: 'Ch 8 — Biotechnology', q: 'PCR stands for the ___ chain reaction.', choices: [['A','protein'],['B','polymerase'],['C','primer'],['D','polynucleotide']], correct: 'B', exp: 'PCR = Polymerase Chain Reaction. Called a "chain reaction" because each cycle doubles the DNA — exponential growth.' },
+  { type: 'fb', chapter: 'Ch 8 — Biotechnology', q: '___ is the process of isolating and making copies of a gene.', choices: [['A','PCR'],['B','transformation'],['C','gene cloning'],['D','gel electrophoresis']], correct: 'C', exp: 'Gene cloning uses bacteria to make copies of a gene. As bacteria reproduce, they copy the inserted gene too.' },
+  { type: 'fb', chapter: 'Ch 8 — Biotechnology', q: '___ DNA results from the ligation of an isolated gene and plasmid DNA.', choices: [['A','Recombinant'],['B','Synthetic'],['C','Cloned'],['D','Mutated']], correct: 'A', exp: 'Recombinant DNA combines DNA from two different sources — like a human gene joined to a bacterial plasmid.' },
+  { type: 'fb', chapter: 'Ch 8 — Biotechnology', q: '___ involves heating DNA to break the bonds holding together the two DNA strands.', choices: [['A','Annealing'],['B','Extension'],['C','Ligation'],['D','Denaturing']], correct: 'D', exp: 'Denaturing is the first step of each PCR cycle — heat breaks the hydrogen bonds between paired bases.' },
+  { type: 'fb', chapter: 'Ch 8 — Biotechnology', q: 'PCR makes many copies of a ___ or other DNA segment.', choices: [['A','gene'],['B','protein'],['C','ribosome'],['D','cell']], correct: 'A', exp: 'PCR amplifies a specific target sequence — usually a gene or DNA segment of interest, using primers that flank the target.' },
+  { type: 'fb', chapter: 'Ch 8 — Biotechnology', q: 'The use of biotechnology has raised a number of ethical, ___, and social issues.', choices: [['A','medical'],['B','legal'],['C','political'],['D','scientific']], correct: 'B', exp: 'ELSI = Ethical, Legal, and Social Issues. Legal questions include who owns genetic info and whether you can patent organisms.' },
+  // Matching
+  { type: 'match', chapter: 'Ch 8 — Biotechnology', q: 'MATCHING: Biotechnology', choices: [['A','enzyme that joins two pieces of DNA'],['B','first human protein produced by genetic engineering'],['C','process that makes many copies of a gene'],['D','isolating and copying a gene'],['E','placing recombinant DNA into a living cell'],['F','circular DNA from a bacterial cell'],['G','genetically modified plants'],['H','protein that cuts DNA in a specific sequence'],['I','using technology to change genetic makeup for human purposes'],['J','made by joining DNA from two different sources']], correct: 'I', exp: 'Biotechnology = the use of technology to modify organisms for human benefit.' },
+  { type: 'match', chapter: 'Ch 8 — Biotechnology', q: 'MATCHING: DNA ligase', choices: [['A','enzyme that joins two pieces of DNA'],['B','first human protein produced by genetic engineering'],['C','process that makes many copies of a gene'],['D','isolating and copying a gene'],['E','placing recombinant DNA into a living cell'],['F','circular DNA from a bacterial cell'],['G','genetically modified plants'],['H','protein that cuts DNA in a specific sequence'],['I','using technology to change genetic makeup for human purposes'],['J','made by joining DNA from two different sources']], correct: 'A', exp: 'DNA ligase is the "glue" of molecular biology. Used in cloning to join gene and plasmid.' },
+  { type: 'match', chapter: 'Ch 8 — Biotechnology', q: 'MATCHING: Gene cloning', choices: [['A','enzyme that joins two pieces of DNA'],['B','first human protein produced by genetic engineering'],['C','process that makes many copies of a gene'],['D','isolating and copying a gene'],['E','placing recombinant DNA into a living cell'],['F','circular DNA from a bacterial cell'],['G','genetically modified plants'],['H','protein that cuts DNA in a specific sequence'],['I','using technology to change genetic makeup for human purposes'],['J','made by joining DNA from two different sources']], correct: 'D', exp: 'Gene cloning uses bacteria to make copies of a gene. As bacteria reproduce, they copy the gene too.' },
+  { type: 'match', chapter: 'Ch 8 — Biotechnology', q: 'MATCHING: Restriction enzyme', choices: [['A','enzyme that joins two pieces of DNA'],['B','first human protein produced by genetic engineering'],['C','process that makes many copies of a gene'],['D','isolating and copying a gene'],['E','placing recombinant DNA into a living cell'],['F','circular DNA from a bacterial cell'],['G','genetically modified plants'],['H','protein that cuts DNA in a specific sequence'],['I','using technology to change genetic makeup for human purposes'],['J','made by joining DNA from two different sources']], correct: 'H', exp: 'Restriction enzymes are "molecular scissors" — they cut DNA at specific short sequences. Used to cut genes for cloning.' },
+  { type: 'match', chapter: 'Ch 8 — Biotechnology', q: 'MATCHING: Insulin', choices: [['A','enzyme that joins two pieces of DNA'],['B','first human protein produced by genetic engineering'],['C','process that makes many copies of a gene'],['D','isolating and copying a gene'],['E','placing recombinant DNA into a living cell'],['F','circular DNA from a bacterial cell'],['G','genetically modified plants'],['H','protein that cuts DNA in a specific sequence'],['I','using technology to change genetic makeup for human purposes'],['J','made by joining DNA from two different sources']], correct: 'B', exp: 'Human insulin was the first biotech drug — produced in bacteria starting in 1978, approved as a drug by 1982.' },
+  { type: 'match', chapter: 'Ch 8 — Biotechnology', q: 'MATCHING: Plasmid', choices: [['A','enzyme that joins two pieces of DNA'],['B','first human protein produced by genetic engineering'],['C','process that makes many copies of a gene'],['D','isolating and copying a gene'],['E','placing recombinant DNA into a living cell'],['F','circular DNA from a bacterial cell'],['G','genetically modified plants'],['H','protein that cuts DNA in a specific sequence'],['I','using technology to change genetic makeup for human purposes'],['J','made by joining DNA from two different sources']], correct: 'F', exp: 'Plasmids are small circular DNA molecules in bacteria, separate from the main chromosome. Used as vehicles to carry genes into cells.' },
+  { type: 'match', chapter: 'Ch 8 — Biotechnology', q: 'MATCHING: Polymerase chain reaction (PCR)', choices: [['A','enzyme that joins two pieces of DNA'],['B','first human protein produced by genetic engineering'],['C','process that makes many copies of a gene'],['D','isolating and copying a gene'],['E','placing recombinant DNA into a living cell'],['F','circular DNA from a bacterial cell'],['G','genetically modified plants'],['H','protein that cuts DNA in a specific sequence'],['I','using technology to change genetic makeup for human purposes'],['J','made by joining DNA from two different sources']], correct: 'C', exp: 'PCR is a fast, cell-free way to copy DNA. Used for genetic testing, forensics, diagnostics.' },
+  { type: 'match', chapter: 'Ch 8 — Biotechnology', q: 'MATCHING: Recombinant DNA', choices: [['A','enzyme that joins two pieces of DNA'],['B','first human protein produced by genetic engineering'],['C','process that makes many copies of a gene'],['D','isolating and copying a gene'],['E','placing recombinant DNA into a living cell'],['F','circular DNA from a bacterial cell'],['G','genetically modified plants'],['H','protein that cuts DNA in a specific sequence'],['I','using technology to change genetic makeup for human purposes'],['J','made by joining DNA from two different sources']], correct: 'J', exp: 'Recombinant DNA combines DNA from two different organisms — like a human gene in a bacterial plasmid.' },
+  { type: 'match', chapter: 'Ch 8 — Biotechnology', q: 'MATCHING: Transformation', choices: [['A','enzyme that joins two pieces of DNA'],['B','first human protein produced by genetic engineering'],['C','process that makes many copies of a gene'],['D','isolating and copying a gene'],['E','placing recombinant DNA into a living cell'],['F','circular DNA from a bacterial cell'],['G','genetically modified plants'],['H','protein that cuts DNA in a specific sequence'],['I','using technology to change genetic makeup for human purposes'],['J','made by joining DNA from two different sources']], correct: 'E', exp: 'Transformation in biotech: getting recombinant DNA into a bacterial cell, usually via heat shock or electric pulse.' },
+  { type: 'match', chapter: 'Ch 8 — Biotechnology', q: 'MATCHING: Transgenic crop', choices: [['A','enzyme that joins two pieces of DNA'],['B','first human protein produced by genetic engineering'],['C','process that makes many copies of a gene'],['D','isolating and copying a gene'],['E','placing recombinant DNA into a living cell'],['F','circular DNA from a bacterial cell'],['G','genetically modified plants'],['H','protein that cuts DNA in a specific sequence'],['I','using technology to change genetic makeup for human purposes'],['J','made by joining DNA from two different sources']], correct: 'G', exp: 'Transgenic crops are plants with genes from another species — like Bt corn or Golden Rice.' },
+];
+
+// ============ STATE ============
+let questions = [];
+let currentIdx = 0;
+let correctCount = 0;
+let wrongCount = 0;
+let answeredQuestions = []; // for review and retry
+
+// ============ UTILITY ============
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// Build a copy of a question with its choices shuffled, tracking the new correct letter
+function shuffleQuestion(q) {
+  let choices;
+  if (q.type === 'tf') {
+    // For T/F, present True and False (always in standard order)
+    choices = [['A','True'],['B','False']];
+    return { ...q, displayChoices: choices, correctLetter: q.correct === 'True' ? 'A' : 'B' };
+  }
+  // Find correct text
+  const correctText = q.choices.find(c => c[0] === q.correct)[1];
+  // Shuffle the choices
+  const shuffled = shuffleArray(q.choices);
+  // Reassign letters A, B, C, ...
+  const newChoices = shuffled.map((c, i) => [String.fromCharCode(65 + i), c[1]]);
+  // Find new letter of the correct answer
+  const correctLetter = newChoices.find(c => c[1] === correctText)[0];
+  return { ...q, displayChoices: newChoices, correctLetter };
+}
+
+// ============ START / RESTART ============
+function startQuiz() {
+  questions = shuffleArray(allQuestions).map(shuffleQuestion);
+  currentIdx = 0;
+  correctCount = 0;
+  wrongCount = 0;
+  answeredQuestions = [];
+  document.getElementById('start-screen').classList.add('hidden');
+  document.getElementById('results').classList.remove('active');
+  document.getElementById('quiz-view').classList.add('active');
+  renderQuestion();
+  window.scrollTo(0, 0);
+}
+
+function restartQuiz() {
+  startQuiz();
+}
+
+function retryWrong() {
+  const wrongOnes = answeredQuestions.filter(a => !a.wasCorrect).map(a => a.original);
+  if (wrongOnes.length === 0) return;
+  questions = shuffleArray(wrongOnes).map(shuffleQuestion);
+  currentIdx = 0;
+  correctCount = 0;
+  wrongCount = 0;
+  answeredQuestions = [];
+  document.getElementById('results').classList.remove('active');
+  document.getElementById('quiz-view').classList.add('active');
+  document.getElementById('review-section').classList.remove('show');
+  document.getElementById('review-toggle').textContent = 'Show review';
+  renderQuestion();
+  window.scrollTo(0, 0);
+}
+
+// ============ RENDER QUESTION ============
+function renderQuestion() {
+  if (currentIdx >= questions.length) {
+    showResults();
+    return;
+  }
+  const q = questions[currentIdx];
+
+  document.getElementById('q-type').textContent =
+    q.type === 'tf' ? 'True / False' :
+    q.type === 'mc' ? 'Multiple Choice' :
+    q.type === 'fb' ? 'Fill-in' :
+    q.type === 'match' ? 'Matching' : '';
+  document.getElementById('q-chapter').textContent = q.chapter;
+  document.getElementById('q-text').textContent = q.q;
+
+  // Extras (Punnett or stage diagrams)
+  const extrasEl = document.getElementById('q-extras');
+  extrasEl.innerHTML = '';
+  if (q.extras === 'mitosis') {
+    extrasEl.innerHTML = `
+      <div class="mitosis-diagram">
+        <div class="stage-box"><span class="stage-letter">A</span><span class="stage-label">Chromosomes loose in nucleus</span></div>
+        <div class="stage-box"><span class="stage-letter">B</span><span class="stage-label">Attached to spindle, at poles</span></div>
+        <div class="stage-box"><span class="stage-letter">C</span><span class="stage-label">Lined up at equator</span></div>
+        <div class="stage-box"><span class="stage-letter">D</span><span class="stage-label">Two cells separating</span></div>
+      </div>`;
+  } else if (q.extras === 'meiosis') {
+    extrasEl.innerHTML = `
+      <div class="diagram-grid">
+        <div class="diagram-box"><span class="diagram-letter">A</span><span class="diagram-label">2 single chromosomes (haploid)</span></div>
+        <div class="diagram-box"><span class="diagram-letter">B</span><span class="diagram-label">2 duplicated chromosomes</span></div>
+        <div class="diagram-box"><span class="diagram-letter">C</span><span class="diagram-label">Cell splitting in two</span></div>
+        <div class="diagram-box"><span class="diagram-letter">D</span><span class="diagram-label">4 duplicated in one cell</span></div>
+        <div class="diagram-box"><span class="diagram-letter">E</span><span class="diagram-label">Two cells, 2 duplicated each</span></div>
+      </div>`;
+  } else if (q.extras === 'punnett:Bb') {
+    extrasEl.innerHTML = `
+      <div class="punnett">
+        <div class="corner"></div>
+        <div class="label">B</div>
+        <div class="label">b</div>
+        <div class="label">B</div>
+        <div>BB</div>
+        <div>Bb</div>
+        <div class="label">b</div>
+        <div>Bb</div>
+        <div>bb</div>
+      </div>`;
+  }
+
+  // Render choices as buttons
+  const choicesEl = document.getElementById('q-choices');
+  choicesEl.innerHTML = '';
+  q.displayChoices.forEach(([letter, text]) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice';
+    btn.dataset.letter = letter;
+    btn.innerHTML = `<span class="letter">${letter}</span><span class="text">${text}</span>`;
+    btn.onclick = () => selectAnswer(letter);
+    choicesEl.appendChild(btn);
+  });
+
+  // Reset feedback
+  document.getElementById('feedback').classList.remove('show', 'correct-fb', 'wrong-fb');
+  document.getElementById('next-btn').style.display = 'none';
+
+  updateProgress();
+}
+
+function updateProgress() {
+  document.getElementById('current').textContent = currentIdx + 1;
+  document.getElementById('total').textContent = questions.length;
+  document.getElementById('correct-count').textContent = correctCount;
+  document.getElementById('wrong-count').textContent = wrongCount;
+  document.getElementById('progress-fill').style.width = `${((currentIdx + 1) / questions.length) * 100}%`;
+}
+
+// ============ ANSWER ============
+function selectAnswer(picked) {
+  const q = questions[currentIdx];
+  const isCorrect = picked === q.correctLetter;
+
+  // Disable all buttons & visually mark
+  document.querySelectorAll('.choice').forEach(btn => {
+    btn.disabled = true;
+    const letter = btn.dataset.letter;
+    if (letter === q.correctLetter) {
+      btn.classList.add('correct');
+    } else if (letter === picked && !isCorrect) {
+      btn.classList.add('wrong');
+    } else {
+      btn.classList.add('dimmed');
+    }
+  });
+
+  // Tally
+  if (isCorrect) correctCount++;
+  else wrongCount++;
+
+  // Save for review
+  answeredQuestions.push({
+    original: q, // keep the original question (unshuffled choices) for retry
+    question: q.q,
+    chapter: q.chapter,
+    pickedLetter: picked,
+    pickedText: q.displayChoices.find(c => c[0] === picked)[1],
+    correctLetter: q.correctLetter,
+    correctText: q.displayChoices.find(c => c[0] === q.correctLetter)[1],
+    wasCorrect: isCorrect,
+    exp: q.exp,
+  });
+
+  // Show feedback
+  const fb = document.getElementById('feedback');
+  const fbLabel = document.getElementById('feedback-label');
+  const fbText = document.getElementById('feedback-text');
+  fb.classList.add('show', isCorrect ? 'correct-fb' : 'wrong-fb');
+  fbLabel.textContent = isCorrect ? 'Correct' : 'Not quite';
+  fbText.innerHTML = isCorrect
+    ? q.exp
+    : `<strong>Correct answer: ${q.correctLetter}.</strong> ${q.exp}`;
+
+  document.getElementById('next-btn').style.display = 'inline-block';
+  updateProgress();
+}
+
+function nextQuestion() {
+  currentIdx++;
+  if (currentIdx >= questions.length) {
+    showResults();
+  } else {
+    renderQuestion();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
+// ============ RESULTS ============
+function showResults() {
+  document.getElementById('quiz-view').classList.remove('active');
+  document.getElementById('results').classList.add('active');
+
+  const total = correctCount + wrongCount;
+  const pct = total > 0 ? Math.round((correctCount / total) * 100) : 0;
+  document.getElementById('score-percent').textContent = pct + '%';
+  document.getElementById('score-fraction').textContent = `${correctCount} / ${total}`;
+  document.getElementById('final-correct').textContent = correctCount;
+  document.getElementById('final-wrong').textContent = wrongCount;
+
+  document.getElementById('retry-wrong-btn').disabled = wrongCount === 0;
+  if (wrongCount === 0) {
+    document.getElementById('retry-wrong-btn').textContent = 'No wrong answers!';
+  } else {
+    document.getElementById('retry-wrong-btn').textContent = `Retry ${wrongCount} wrong only`;
+  }
+
+  // Build review list (wrong answers only)
+  const reviewList = document.getElementById('review-list');
+  const wrongs = answeredQuestions.filter(a => !a.wasCorrect);
+  if (wrongs.length === 0) {
+    reviewList.innerHTML = '<p style="color:var(--ink-soft); font-size:14px;">You got every question right. Nothing to review here.</p>';
+  } else {
+    reviewList.innerHTML = wrongs.map(a => `
+      <div class="review-item">
+        <div class="rq">${a.question}</div>
+        <div class="ra">
+          <span class="picked">You picked: <strong>${a.pickedLetter}. ${a.pickedText}</strong></span><br>
+          <span class="right">Correct: <strong>${a.correctLetter}. ${a.correctText}</strong></span><br>
+          <span style="display:block; margin-top:8px;">${a.exp}</span>
+        </div>
+      </div>
+    `).join('');
+  }
+  // Make sure review starts collapsed
+  document.getElementById('review-section').classList.remove('show');
+  document.getElementById('review-toggle').textContent = 'Show review';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function toggleReview() {
+  const sec = document.getElementById('review-section');
+  const btn = document.getElementById('review-toggle');
+  sec.classList.toggle('show');
+  btn.textContent = sec.classList.contains('show') ? 'Hide review' : 'Show review';
+  if (sec.classList.contains('show')) {
+    setTimeout(() => sec.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+  }
+}
+
+// Keyboard: Enter = next when feedback is showing
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && document.getElementById('next-btn').style.display !== 'none') {
+    nextQuestion();
+  }
+});
+</script>
+</body>
+</html>

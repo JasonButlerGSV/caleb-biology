@@ -140,6 +140,51 @@
     transform: translateX(4px);
   }
 
+  /* Quiz link section */
+  .quiz-link-section {
+    margin-top: 32px;
+  }
+  .quiz-divider {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 14px;
+    color: var(--ink-faint);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .quiz-divider::before,
+  .quiz-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+  .quiz-link-card {
+    background: var(--card-bg);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 28px 28px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+  .quiz-link-card:hover {
+    border-color: var(--line-strong);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+  }
+  .quiz-link-card:hover .chapter-arrow {
+    color: var(--accent);
+    transform: translateX(4px);
+  }
+
   /* ---------- Deck View ---------- */
   .deck-view {
     display: none;
@@ -594,6 +639,20 @@
 
     <div class="chapter-grid" id="chapter-grid">
       <!-- chapter cards injected here -->
+    </div>
+
+    <div class="quiz-link-section">
+      <div class="quiz-divider">
+        <span>Or test yourself</span>
+      </div>
+      <a class="quiz-link-card" href="quiz.html">
+        <div class="chapter-card-info">
+          <div class="chapter-label">Full Quiz</div>
+          <div class="chapter-name"><em>Mixed Questions</em></div>
+          <div class="chapter-count">Multiple choice quiz · all chapters · all question types</div>
+        </div>
+        <svg class="chapter-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
     </div>
   </div>
 
